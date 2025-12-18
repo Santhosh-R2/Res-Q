@@ -61,8 +61,7 @@ function Registration() {
     setIsLoading(true);
 
     try {
-      // 2. API Call with Axios Instance
-      // Remove confirmPassword before sending
+     
       const { confirmPassword, ...submitData } = formData;
       
       const response = await axiosInstance.post("auth/register", submitData);
