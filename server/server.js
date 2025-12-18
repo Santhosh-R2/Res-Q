@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 // Middleware
-app.use(cors()); // Allows frontend to talk to backend
+app.use(cors("*")); // Allows frontend to talk to backend
 app.use(express.json()); // Allows parsing JSON body
 
 // API Routes
