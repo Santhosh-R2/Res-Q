@@ -523,3 +523,21 @@
   box-shadow: var(--shadow);
 }
 .media-btn:hover { transform: translateY(-3px); border-color: var(--primary); color: var(--primary); }
+/* Add to src/styles/SOSPage.css */
+
+.address-text {
+  font-size: 0.8rem !important; /* Smaller than coordinates */
+  font-weight: 500 !important;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  display: block;
+  text-align: right;
+}
+
+.system-readout {
+  /* Ensure readout has enough width on mobile */
+  min-width: 300px;
+}

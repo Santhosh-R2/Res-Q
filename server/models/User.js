@@ -19,21 +19,19 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    role: {
-      type: String,
-      enum: ["victim", "volunteer", "donor", "admin"],
-      default: "victim",
-    },
-    // For Location Tracking (GeoJSON)
+   role: {
+    type: String,
+    enum: ['victim', 'volunteer', 'donor', 'admin'], // <--- CHECK THESE VALUES
+    default: 'victim',
+  },
     location: {
       type: { type: String, default: "Point" },
-      coordinates: { type: [Number], default: [0, 0] }, // [Longitude, Latitude]
+      coordinates: { type: [Number], default: [0, 0] }, 
     },
   },
   { timestamps: true }
 );
 
-// Create Geospatial Index for "Find nearest volunteer" feature
 UserSchema.index({ location: "2dsphere" });
 
 module.exports = mongoose.model("User", UserSchema);

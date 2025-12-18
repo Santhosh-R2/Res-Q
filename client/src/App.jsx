@@ -9,6 +9,7 @@ import Registration from './components/common/Registration'
 import UserLayout from './components/Layout/UserLayout'
 import Dashboard from './components/User/Dashboard'
 import SOSPage from './components/User/SOSPage'
+import MyRequests from './components/User/MyRequests'
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
         <Route element={<UserLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/sos" element={<SOSPage />} />
-
+ <Route path="/my-requests" element={<MyRequests />} />
         </Route>
       </Routes>
     </Router>

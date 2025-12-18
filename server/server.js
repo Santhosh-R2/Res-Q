@@ -5,7 +5,7 @@ const connectDB = require("./config/db");
 
 // Routes
 const authRoutes = require("./routes/authRoutes");
-
+const sosRoutes = require("./routes/sosRoutes");
 // Config
 dotenv.config();
 const app = express();
@@ -20,7 +20,7 @@ app.use(express.json()); // Allows parsing JSON body
 
 // API Routes
 app.use("/api/auth", authRoutes);
-
+app.use("/api/sos", sosRoutes); // <--- Add this line
 // Base Route
 app.get("/", (req, res) => {
   res.send("ResQ-Link API is Running...");
