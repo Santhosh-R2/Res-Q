@@ -67,7 +67,8 @@ const getAllSOS = async (req, res) => {
 const getMyRequests = async (req, res) => {
   try {
     const requests = await SOSRequest.find({ userId: req.user._id })
-      .sort({ createdAt: -1 }); // Newest first
+      .populate('linkedResources') // <--- This attaches the items array!
+      .sort({ createdAt: -1 });
 
     res.json(requests);
   } catch (error) {

@@ -2,51 +2,31 @@ const mongoose = require("mongoose");
 
 const SOSRequestSchema = new mongoose.Schema(
   {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    type: {
-      type: String,
-      required: [true, "Emergency type is required"], // e.g., Fire, Medical
-      enum: ['Medical', 'Fire', 'Flood', 'Collapse', 'Violence', 'Other']
-    },
-    description: {
-      type: String,
-      trim: true,
-    },
-    image: {
-      type: String, // We will store the Base64 string directly for simplicity (or cloud URL)
-    },
-    status: {
-      type: String,
-      enum: ["pending", "accepted", "resolved", "cancelled"],
-      default: "pending",
-    },
-    // GeoJSON Location format (Crucial for geospatial queries)
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    type: { type: String, required: true },
+    description: { type: String },
+    image: { type: String },
+    status: { type: String, default: "pending" },
     location: {
-      type: {
-        type: String,
-        enum: ["Point"],
-        default: "Point",
-      },
-      coordinates: {
-        type: [Number], // [longitude, latitude]
-        required: true,
-      },
+      type: { type: String, default: "Point" },
+      coordinates: { type: [Number], required: true },
       accuracy: Number,
     },
-    assignedVolunteer: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
-    },
   },
-  { timestamps: true }
+  { 
+    timestamps: true,
+    toJSON: { virtuals: true }, // <--- CRITICAL: Include virtuals in JSON response
+    toObject: { virtuals: true }
+  }
 );
 
-// Index for Geospatial Queries (Find nearest SOS)
+// --- VIRTUAL RELATIONSHIP ---
+SOSRequestSchema.virtual('linkedResources', {
+  ref: 'ResourceRequest', // The model to look into
+  localField: '_id',      // Find requests where...
+  foreignField: 'sosId'   // ...the 'sosId' matches this SOS's ID
+});
+
 SOSRequestSchema.index({ location: "2dsphere" });
 
 module.exports = mongoose.model("SOSRequest", SOSRequestSchema);
