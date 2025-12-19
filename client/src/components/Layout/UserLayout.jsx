@@ -90,7 +90,7 @@ function UserLayout() {
   ];
 
   const volunteerMenu = [
-    { name: "Mission Control", icon: <FiHome />, path: "/dashboard" },
+    { name: "Mission Control", icon: <FiHome />, path: "/mission-controller" },
     { name: "Available Tasks", icon: <FiClipboard />, path: "/missions" },
     { name: "Live Map", icon: <FiMapPin />, path: "/map" },
     { name: "History", icon: <FiActivity />, path: "/history" },

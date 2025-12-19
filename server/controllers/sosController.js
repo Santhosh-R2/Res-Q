@@ -55,14 +55,15 @@ const createSOS = async (req, res) => {
 // @access  Private
 const getAllSOS = async (req, res) => {
   try {
-    const alerts = await SOSRequest.find({ status: "pending" })
-      .populate("userId", "fullName phone") // Add user details
+    const alerts = await SOSRequest.find({ status: { $ne: 'resolved' } }) // Get pending/active
+      .populate("userId", "fullName phone")
+      .populate("linkedResources") // <--- REQUIRED
       .sort({ createdAt: -1 });
 
     res.json(alerts);
   } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+     res.status(500).json({ message: error.message });
+   }
 };
 const getMyRequests = async (req, res) => {
   try {
@@ -75,5 +76,35 @@ const getMyRequests = async (req, res) => {
     res.status(500).json({ message: "Server Error fetching requests" });
   }
 };
+const updateSOSStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const sos = await SOSRequest.findById(req.params.id);
 
-module.exports = { createSOS, getAllSOS ,getMyRequests};
+    if (!sos) return res.status(404).json({ message: "SOS not found" });
+
+    // Optional: Check if user is Volunteer/Admin
+    // if (req.user.role !== 'volunteer' && req.user.role !== 'admin') ...
+
+    sos.status = status;
+    if (status === 'accepted') sos.assignedVolunteer = req.user._id;
+
+    await sos.save();
+    res.json(sos);
+  } catch (error) {
+    res.status(500).json({ message: "Update failed" });
+  }
+};
+const getVolunteerHistory = async (req, res) => {
+  try {
+    // Find SOS requests where THIS user is the assigned volunteer
+    const history = await SOSRequest.find({ assignedVolunteer: req.user._id })
+      .populate("userId", "fullName phone")
+      .sort({ updatedAt: -1 });
+
+    res.json(history);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+module.exports = { createSOS, getAllSOS ,getMyRequests,updateSOSStatus,getVolunteerHistory };

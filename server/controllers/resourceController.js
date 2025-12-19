@@ -41,5 +41,14 @@ const getMyResources = async (req, res) => {
     res.status(500).json({ message: "Error fetching" });
   }
 };
-
-module.exports = { createResourceRequest, getMyResources }; // Add others if needed
+const getAllResources = async (req, res) => {
+  try {
+    const requests = await ResourceRequest.find({ status: "pending" })
+      .populate("userId", "fullName phone") 
+      .sort({ urgency: -1, createdAt: -1 });
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+module.exports = { createResourceRequest, getMyResources ,getAllResources}; // Add others if needed

@@ -1,0 +1,236 @@
+/* --- CONTAINER --- */
+.live-map-wrapper {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 60px); /* Adjust based on your header height */
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+/* Map Loader */
+.map-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* --- FULLSCREEN MAP --- */
+.fullscreen-map {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* --- FLOATING CONTROLS PANEL --- */
+.map-controls {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 280px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Above Leaflet */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.control-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.control-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #1e293b;
+  font-weight: 800;
+}
+
+.live-indicator {
+  font-size: 0.7rem;
+  color: #ef4444;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #fee2e2;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.blink-dot {
+  width: 6px; height: 6px;
+  background: #ef4444;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Filter Chips */
+.filter-chips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.filter-chips button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.filter-chips button.active {
+  background: #ffffff;
+  color: #1e293b;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot.red { background: #ef4444; }
+.dot.orange { background: #f97316; }
+
+/* Legend */
+.map-legend {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 15px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.icon-red { color: #ef4444; }
+.icon-orange { color: #f97316; }
+
+/* --- RE-CENTER BUTTON --- */
+.recenter-btn {
+  position: absolute;
+  bottom: 30px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  z-index: 1000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #333;
+  transition: transform 0.2s;
+}
+.recenter-btn:hover { transform: scale(1.1); color: #2563eb; }
+
+/* --- POPUP STYLING --- */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  min-width: 200px;
+}
+
+.popup-content {
+  padding: 15px;
+  text-align: center;
+}
+
+.popup-content h4 {
+  margin: 8px 0;
+  font-size: 1rem;
+  color: #1e293b;
+}
+
+.popup-content p {
+  margin: 0 0 12px 0;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+.badge.red { background: #fee2e2; color: #ef4444; }
+.badge.orange { background: #ffedd5; color: #f97316; }
+
+.nav-btn {
+  width: 100%;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.nav-btn:hover { background: #2563eb; }
+
+/* User Pulse Animation */
+.user-pulse-marker {
+  animation: pulse-border 1.5s infinite;
+  border-radius: 50%;
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .map-controls {
+    top: auto;
+    bottom: 20px;
+    left: 10px;
+    right: 80px; /* Space for recenter btn */
+    width: auto;
+    padding: 15px;
+  }
+  .recenter-btn { bottom: 35px; right: 10px; }
+}

@@ -1,0 +1,116 @@
+.hist-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-bottom: 60px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* HEADER */
+.hist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.hist-title h1 { font-size: 2rem; margin: 0 0 5px 0; color: var(--text-main); }
+.hist-title p { color: var(--text-muted); margin: 0; }
+
+.hist-stats-row { display: flex; gap: 20px; }
+
+.h-stat-card {
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-color);
+  padding: 15px 25px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: var(--shadow);
+}
+
+.stat-icon {
+  width: 45px; height: 45px; border-radius: 10px; display: flex;
+  align-items: center; justify-content: center; font-size: 1.5rem;
+}
+.stat-icon.purple { background: #f3e8ff; color: #9333ea; }
+.stat-icon.green { background: #dcfce7; color: #16a34a; }
+
+.h-stat-card h3 { margin: 0; font-size: 1.5rem; color: var(--text-main); }
+.h-stat-card span { font-size: 0.85rem; color: var(--text-muted); }
+
+/* CONTROLS */
+.hist-controls { margin-bottom: 25px; }
+
+.h-tabs {
+  display: inline-flex;
+  background: var(--bg-sidebar);
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.h-tabs button {
+  background: transparent; border: none; padding: 8px 20px;
+  border-radius: 8px; font-weight: 600; color: var(--text-muted); cursor: pointer;
+  transition: 0.2s;
+}
+.h-tabs button.active { background: var(--bg-main); color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+/* CARD LIST */
+.hist-list { display: flex; flex-direction: column; gap: 15px; }
+
+.hist-card {
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s;
+}
+.hist-card:hover { transform: translateX(5px); border-color: var(--primary); }
+
+.hist-card-left { display: flex; align-items: center; gap: 20px; }
+
+.hist-icon-box {
+  width: 50px; height: 50px; border-radius: 12px; display: flex;
+  align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700;
+  text-transform: uppercase;
+}
+.hist-icon-box.medical { background: #fee2e2; color: #ef4444; }
+.hist-icon-box.fire { background: #ffedd5; color: #f97316; }
+.hist-icon-box.flood { background: #dbeafe; color: #2563eb; }
+
+.hist-card-info h4 { margin: 0; font-size: 1.1rem; color: var(--text-main); }
+.hist-id { font-size: 0.8rem; color: var(--text-muted); font-family: monospace; background: var(--bg-main); padding: 2px 6px; border-radius: 4px; }
+.hist-desc { margin: 5px 0 0 0; color: var(--text-main); font-size: 0.95rem; }
+
+.hist-card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+
+.hist-meta { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-muted); }
+.meta-item { display: flex; align-items: center; gap: 5px; }
+
+.h-badge {
+  padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase;
+}
+.h-badge.green { background: #dcfce7; color: #16a34a; }
+.h-badge.blue { background: #dbeafe; color: #2563eb; }
+.h-badge.gray { background: #f3f4f6; color: #6b7280; }
+
+.hist-empty { text-align: center; color: var(--text-muted); padding: 40px; font-style: italic; }
+.hist-loader { text-align: center; padding: 40px; color: var(--primary); font-weight: 600; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hist-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .hist-stats-row { width: 100%; }
+  .h-stat-card { flex: 1; }
+  .hist-card { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .hist-card-right { align-items: flex-start; width: 100%; border-top: 1px solid var(--border-color); padding-top: 15px; }
+  .hist-meta { flex-direction: column; gap: 5px; }
+}

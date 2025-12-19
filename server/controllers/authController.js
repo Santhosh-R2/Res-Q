@@ -108,6 +108,8 @@ const loginUser = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role, 
+        phone: user.phone,
+      
         token: generateToken(user._id),
       });
 
@@ -135,5 +137,25 @@ const loginAdmin = async (req, res) => {
     res.status(401).json({ message: "Invalid Admin Credentials" });
   }
 };
+const updateUserProfile = async (req, res) => {
+  const user = await User.findById(req.user._id);
 
-module.exports = { registerUser, loginUser, loginAdmin };
+  if (user) {
+    user.fullName = req.body.fullName || user.fullName;
+    user.phone = req.body.phone || user.phone;
+    if (req.body.role) user.role = req.body.role; // Allow role update
+
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      fullName: updatedUser.fullName,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      token: generateToken(updatedUser._id),
+    });
+  } else {
+    res.status(404).json({ message: "User not found" });
+  }
+};
+module.exports = { registerUser, loginUser, loginAdmin, updateUserProfile };

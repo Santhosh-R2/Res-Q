@@ -10,6 +10,11 @@ import UserLayout from './components/Layout/UserLayout'
 import Dashboard from './components/User/Dashboard'
 import SOSPage from './components/User/SOSPage'
 import MyRequests from './components/User/MyRequests'
+import SafetyTips from './components/User/SafetyTips'
+import Profile from './components/User/Profile'
+import MissionController from './components/User/MissonController'
+import LiveMap from './components/User/LiveMap'
+import History from './components/User/History'
 
 function App() {
   return (
@@ -24,6 +29,12 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/sos" element={<SOSPage />} />
           <Route path="/my-requests" element={<MyRequests />} />
+          <Route path="/safety-tips" element={<SafetyTips />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/mission-controller" element={<MissionController />} />
+          <Route path="/map" element={<LiveMap />} />
+          <Route path="/history" element={<History />} />
+
         </Route>
       </Routes>
     </Router>
