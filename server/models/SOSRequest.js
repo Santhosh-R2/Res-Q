@@ -15,6 +15,10 @@ const SOSRequestSchema = new mongoose.Schema(
       coordinates: { type: [Number], required: true },
       accuracy: Number,
     },
+    requiredItems: [{
+      item: String,
+      status: { type: String, default: "pending" } // pending, dispatched
+    }],
   },
   { 
     timestamps: true,

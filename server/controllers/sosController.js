@@ -6,7 +6,7 @@ const User = require("../models/User");
 // @access  Private (Logged in users only)
 const createSOS = async (req, res) => {
   try {
-    const { location, emergencyType, description, image } = req.body;
+    const { location, emergencyType, description, image ,requiredItems } = req.body;
 
     // 1. Basic Validation
     if (!location || !location.lat || !location.lng) {
@@ -21,7 +21,8 @@ const createSOS = async (req, res) => {
       userId: req.user._id, // Comes from authMiddleware
       type: emergencyType,
       description,
-      image, // Saving Base64 string directly (Consider Cloudinary for production)
+      image, 
+       requiredItems: requiredItems || [],
       location: {
         type: "Point",
         coordinates: [location.lng, location.lat], // MongoDB uses [Longitude, Latitude] order
