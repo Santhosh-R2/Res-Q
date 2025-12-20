@@ -55,9 +55,10 @@ const createSOS = async (req, res) => {
 // @access  Private
 const getAllSOS = async (req, res) => {
   try {
-    const alerts = await SOSRequest.find({ status: { $ne: 'resolved' } }) // Get pending/active
+    const alerts = await SOSRequest.find({ status: { $ne: 'resolved' } })
       .populate("userId", "fullName phone")
-      .populate("linkedResources") // <--- REQUIRED
+      .populate("assignedVolunteer", "fullName phone") // Add this
+      .populate("linkedResources")
       .sort({ createdAt: -1 });
 
     res.json(alerts);
@@ -83,15 +84,29 @@ const updateSOSStatus = async (req, res) => {
 
     if (!sos) return res.status(404).json({ message: "SOS not found" });
 
-    // Optional: Check if user is Volunteer/Admin
-    // if (req.user.role !== 'volunteer' && req.user.role !== 'admin') ...
-
+    // Update the status
     sos.status = status;
-    if (status === 'accepted') sos.assignedVolunteer = req.user._id;
+
+    // Logic: If status is accepted, link the current user as the volunteer
+    if (status === 'accepted') {
+      sos.assignedVolunteer = req.user._id; 
+    }
+
+    // Optional: If you want to clear the volunteer if it's set back to pending
+    if (status === 'pending') {
+      sos.assignedVolunteer = undefined;
+    }
 
     await sos.save();
-    res.json(sos);
+    
+    // Return the updated document populated with volunteer details if needed
+    const updatedSos = await SOSRequest.findById(sos._id)
+      .populate("userId", "fullName phone")
+      .populate("assignedVolunteer", "fullName phone");
+
+    res.json(updatedSos);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Update failed" });
   }
 };
@@ -107,4 +122,44 @@ const getVolunteerHistory = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-module.exports = { createSOS, getAllSOS ,getMyRequests,updateSOSStatus,getVolunteerHistory };
+const assignTask = async (req, res) => {
+  try {
+    const { sosId, volunteerId } = req.body;
+
+    const sos = await SOSRequest.findById(sosId);
+    if (!sos) return res.status(404).json({ message: "Task not found" });
+
+    sos.assignedVolunteer = volunteerId;
+    sos.status = "accepted"; // Auto-move to In Progress
+    await sos.save();
+
+    res.json({ message: "Task Assigned Successfully", sos });
+  } catch (error) {
+    res.status(500).json({ message: "Assignment Failed" });
+  }
+};
+const getVolunteers = async (req, res) => {
+  try {
+    const volunteers = await User.find({ role: 'volunteer' }).select('fullName email phone');
+    res.json(volunteers);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching volunteers" });
+  }
+};
+const acceptTask = async (req, res) => {
+  try {
+    const sos = await SOSRequest.findById(req.params.id);
+    
+    if (!sos) return res.status(404).json({ message: "Task not found" });
+    if (sos.assignedVolunteer) return res.status(400).json({ message: "Task already taken" });
+
+    sos.assignedVolunteer = req.user._id;
+    sos.status = "accepted";
+    await sos.save();
+
+    res.json(sos);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to accept task" });
+  }
+};
+module.exports = { createSOS, getAllSOS ,getMyRequests,updateSOSStatus,getVolunteerHistory,assignTask,getVolunteers ,acceptTask};

@@ -3,6 +3,9 @@ const mongoose = require("mongoose");
 const SOSRequestSchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    // ADD THIS LINE BELOW
+    assignedVolunteer: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, 
+    
     type: { type: String, required: true },
     description: { type: String },
     image: { type: String },
@@ -15,16 +18,16 @@ const SOSRequestSchema = new mongoose.Schema(
   },
   { 
     timestamps: true,
-    toJSON: { virtuals: true }, // <--- CRITICAL: Include virtuals in JSON response
+    toJSON: { virtuals: true },
     toObject: { virtuals: true }
   }
 );
 
-// --- VIRTUAL RELATIONSHIP ---
+// Virtual for linked resources (already in your code)
 SOSRequestSchema.virtual('linkedResources', {
-  ref: 'ResourceRequest', // The model to look into
-  localField: '_id',      // Find requests where...
-  foreignField: 'sosId'   // ...the 'sosId' matches this SOS's ID
+  ref: 'ResourceRequest',
+  localField: '_id',
+  foreignField: 'sosId'
 });
 
 SOSRequestSchema.index({ location: "2dsphere" });

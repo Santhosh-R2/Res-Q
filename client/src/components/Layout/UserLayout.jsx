@@ -91,7 +91,7 @@ function UserLayout() {
 
   const volunteerMenu = [
     { name: "Mission Control", icon: <FiHome />, path: "/mission-controller" },
-    { name: "Available Tasks", icon: <FiClipboard />, path: "/missions" },
+   
     { name: "Live Map", icon: <FiMapPin />, path: "/map" },
     { name: "History", icon: <FiActivity />, path: "/history" },
     { name: "Profile", icon: <FiUser />, path: "/profile" },
@@ -109,7 +109,7 @@ function UserLayout() {
     { name: "Users", icon: <FiUsers />, path: "/manage-users" },
     { name: "Inventory", icon: <FiDatabase />, path: "/inventory" },
     { name: "Global Map", icon: <FiMapPin />, path: "/admin-map" },
-    { name: "Settings", icon: <FiUser />, path: "/settings" },
+    { name: "AvailableTasks", icon: <FiUser />, path: "/available-tasks" },
   ];
 
   const getMenu = () => {

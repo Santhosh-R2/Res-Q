@@ -22,20 +22,41 @@ function MissionController() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, pending, active
   const [selectedMission, setSelectedMission] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
-  // --- FETCH DATA ---
+  // --- 1. INITIALIZE USER ---
+  useEffect(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem('userInfo'));
+      if (user && user._id) {
+        setCurrentUserId(user._id);
+      }
+    } catch (e) {
+      console.error("Error loading user info", e);
+    }
+  }, []);
+
+  // --- 2. FETCH DATA ---
   const fetchMissions = async () => {
+    // Only fetch if we know who the current user is (to filter properly)
+    if (!currentUserId) return;
+
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
-      // Fetch SOS requests (Backend should populate 'linkedResources')
       const response = await axiosInstance.get('/sos', config); 
-      setMissions(response.data);
-      console.log(response.data);
       
-      if(response.data.length > 0) setSelectedMission(response.data[0]);
+      // FILTER: Exclude my own requests
+      const validMissions = response.data.filter(mission => {
+        const creatorId = mission.userId?._id || mission.userId;
+        return creatorId !== currentUserId;
+      });
+
+      setMissions(validMissions);
+      
+      if(validMissions.length > 0) setSelectedMission(validMissions[0]);
 
     } catch (error) {
       toast.error("Failed to load missions");
@@ -44,7 +65,12 @@ function MissionController() {
     }
   };
 
-  useEffect(() => { fetchMissions(); }, []);
+  // Trigger fetch when User ID is loaded
+  useEffect(() => {
+    if(currentUserId) {
+      fetchMissions();
+    }
+  }, [currentUserId]);
 
   // --- ACTIONS ---
   const updateStatus = async (id, newStatus) => {
@@ -97,32 +123,32 @@ function MissionController() {
           </div>
 
           <div className="mc-list-container">
-            {filteredMissions.map((mission) => (
-              <div 
-                key={mission._id} 
-                className={`mc-card ${selectedMission?._id === mission._id ? 'selected' : ''}`}
-                onClick={() => setSelectedMission(mission)}
-              >
-                <div className="mc-card-top">
-                  <span className={`mc-type-badge ${mission.type.toLowerCase()}`}>{mission.type}</span>
-                  <span className={`mc-status-dot ${mission.status}`}></span>
-                </div>
-                <h4>{mission.description ? mission.description.substring(0, 40) + "..." : "Emergency Request"}</h4>
-                
-                {/* Show Item Count Badge */}
-                {mission.linkedResources && mission.linkedResources.length > 0 && (
-                  <div className="mc-resource-badge">
-                    <FiPackage /> {mission.linkedResources.length} Items Requested
+            {filteredMissions.length === 0 ? <p className="mc-empty">No missions found.</p> :
+              filteredMissions.map((mission) => (
+                <div 
+                  key={mission._id} 
+                  className={`mc-card ${selectedMission?._id === mission._id ? 'selected' : ''}`}
+                  onClick={() => setSelectedMission(mission)}
+                >
+                  <div className="mc-card-top">
+                    <span className={`mc-type-badge ${mission.type.toLowerCase()}`}>{mission.type}</span>
+                    <span className={`mc-status-dot ${mission.status}`}></span>
                   </div>
-                )}
+                  <h4>{mission.description ? mission.description.substring(0, 40) + "..." : "Emergency Request"}</h4>
+                  
+                  {mission.linkedResources && mission.linkedResources.length > 0 && (
+                    <div className="mc-resource-badge">
+                      <FiPackage /> {mission.linkedResources.length} Items Requested
+                    </div>
+                  )}
 
-                <div className="mc-card-meta">
-                  <span><FiClock /> {new Date(mission.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                  <span><FiMapPin /> {Math.round(mission.location.accuracy || 50)}m Acc</span>
+                  <div className="mc-card-meta">
+                    <span><FiClock /> {new Date(mission.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                    <span><FiMapPin /> {Math.round(mission.location.accuracy || 50)}m Acc</span>
+                  </div>
                 </div>
-              </div>
-            ))}
-            {filteredMissions.length === 0 && <p className="mc-empty">No missions found.</p>}
+              ))
+            }
           </div>
         </aside>
 
@@ -186,7 +212,6 @@ function MissionController() {
                     <p className="desc-text">{selectedMission.description || "No details provided."}</p>
                   </div>
 
-                  {/* --- NEW: REQUESTED ITEMS LIST --- */}
                   <div className="info-group">
                     <label>Requested Supplies</label>
                     {selectedMission.linkedResources && selectedMission.linkedResources.length > 0 ? (

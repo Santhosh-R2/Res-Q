@@ -6,17 +6,24 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import { 
-  FiFilter, FiNavigation, FiAlertCircle, FiPackage, FiCrosshair 
+  FiNavigation, FiAlertCircle, FiPackage, FiCrosshair 
 } from "react-icons/fi";
 
 import '../styles/LiveMap.css';
 
-// --- CUSTOM MARKER ICONS ---
-// We use colored SVGs for professional markers
-const createIcon = (color) => {
+// --- FIX LEAFLET MARKER PATHS ---
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+// --- CUSTOM MARKERS ---
+const createColoredIcon = (colorUrl) => {
   return new L.Icon({
-    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconUrl: colorUrl,
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -24,21 +31,24 @@ const createIcon = (color) => {
   });
 };
 
-const sosIcon = createIcon('red');
-const resourceIcon = createIcon('orange');
-const userIcon = new L.Icon({
-    iconUrl: 'https://cdn-icons-png.flaticon.com/512/4024/4024665.png', // Blue dot style
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
-    popupAnchor: [0, -15],
-    className: 'user-pulse-marker' // CSS animation class
+// Red Marker for SOS
+const sosIcon = createColoredIcon('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png');
+
+// Orange Marker for Supplies
+const resourceIcon = createColoredIcon('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png');
+
+// Blue Pulse Dot for User
+const userIcon = new L.DivIcon({
+  className: 'user-pulse-marker',
+  iconSize: [20, 20],
+  iconAnchor: [10, 10]
 });
 
-// --- HELPER: RECENTER MAP COMPONENT ---
+// --- HELPER TO FLY TO LOCATION ---
 function FlyToLocation({ center }) {
   const map = useMap();
   useEffect(() => {
-    if (center) map.flyTo(center, 14, { duration: 2 });
+    if (center) map.flyTo(center, 13, { duration: 1.5 });
   }, [center, map]);
   return null;
 }
@@ -47,11 +57,12 @@ function LiveMap() {
   const [userLocation, setUserLocation] = useState(null);
   const [sosData, setSosData] = useState([]);
   const [resourceData, setResourceData] = useState([]);
-  const [filter, setFilter] = useState('all'); // all, sos, resources
+  const [filter, setFilter] = useState('all'); 
   const [loading, setLoading] = useState(true);
 
   // 1. Get User Location & Data
   useEffect(() => {
+    // Get Location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -59,11 +70,14 @@ function LiveMap() {
           fetchData();
         },
         () => {
-          toast.error("Location Access Denied. Showing Default Map.");
-          setUserLocation([20.5937, 78.9629]); // Default India
+          toast.error("Location Access Denied. Using Default Map.");
+          setUserLocation([20.5937, 78.9629]); // India Center
           fetchData();
         }
       );
+    } else {
+        setUserLocation([20.5937, 78.9629]); 
+        fetchData();
     }
   }, []);
 
@@ -72,38 +86,27 @@ function LiveMap() {
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
+      // Fetch SOS and Resources in parallel
       const [sosRes, resRes] = await Promise.all([
         axiosInstance.get('/sos', config),
-        axiosInstance.get('/resources', config) // Ensure this route exists in backend
+        axiosInstance.get('/resources', config)
       ]);
+
+      console.log("SOS Data:", sosRes.data); // Debug
+      console.log("Resource Data:", resRes.data); // Debug
 
       setSosData(sosRes.data);
       setResourceData(resRes.data);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to load map data");
+      toast.error("Failed to load live data");
     } finally {
       setLoading(false);
     }
   };
 
-  // 2. Open Google Maps for Directions
   const openNavigation = (lat, lng) => {
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
-  };
-
-  // 3. Calculate Distance (Haversine)
-  const getDistance = (lat1, lon1) => {
-    if (!userLocation) return "N/A";
-    const [lat2, lon2] = userLocation;
-    const R = 6371; // km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return (R * c).toFixed(1) + " km";
   };
 
   if (loading) return <div className="map-loader">Initializing Satellite Link...</div>;
@@ -138,8 +141,7 @@ function LiveMap() {
         </div>
       </div>
 
-      {/* RE-CENTER BUTTON */}
-      <button className="recenter-btn" onClick={() => setUserLocation([...userLocation])} title="My Location">
+      <button className="recenter-btn" onClick={() => userLocation && window.location.reload()} title="Refresh GPS">
         <FiCrosshair />
       </button>
 
@@ -151,21 +153,20 @@ function LiveMap() {
         className="fullscreen-map"
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          attribution='&copy; OpenStreetMap contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         
-        {/* COMPONENT TO FLY TO USER */}
         {userLocation && <FlyToLocation center={userLocation} />}
 
-        {/* USER MARKER */}
+        {/* USER LOCATION (Blue Pulse) */}
         {userLocation && (
           <Marker position={userLocation} icon={userIcon}>
             <Popup>You are here</Popup>
           </Marker>
         )}
 
-        {/* SOS MARKERS */}
+        {/* --- SOS MARKERS (RED) --- */}
         {(filter === 'all' || filter === 'sos') && sosData.map(sos => (
           <Marker 
             key={sos._id} 
@@ -175,8 +176,8 @@ function LiveMap() {
             <Popup className="custom-popup">
               <div className="popup-content">
                 <span className="badge red">{sos.type} Emergency</span>
-                <h4>{sos.description ? sos.description.substring(0,30)+'...' : 'Emergency'}</h4>
-                <p>Distance: <strong>{getDistance(sos.location.coordinates[1], sos.location.coordinates[0])}</strong></p>
+                <h4>{sos.description ? sos.description.substring(0,40)+'...' : 'Emergency Request'}</h4>
+                <p>Status: <strong>{sos.status.toUpperCase()}</strong></p>
                 <button className="nav-btn" onClick={() => openNavigation(sos.location.coordinates[1], sos.location.coordinates[0])}>
                   <FiNavigation /> Navigate
                 </button>
@@ -185,7 +186,7 @@ function LiveMap() {
           </Marker>
         ))}
 
-        {/* RESOURCE MARKERS */}
+        {/* --- RESOURCE MARKERS (ORANGE) --- */}
         {(filter === 'all' || filter === 'resources') && resourceData.map(res => (
           <Marker 
             key={res._id} 
@@ -195,7 +196,13 @@ function LiveMap() {
             <Popup className="custom-popup">
               <div className="popup-content">
                 <span className="badge orange">Supply Request</span>
-                <h4>{res.items[0]?.type} + {res.items.length - 1} more</h4>
+                {/* Check if items exist before mapping */}
+                {res.items && res.items.length > 0 ? (
+                   <h4>{res.items[0].itemCategory} + {res.items.length - 1} more</h4>
+                ) : (
+                   <h4>General Supplies</h4>
+                )}
+                
                 <p>Urgency: <strong>{res.urgency}</strong></p>
                 <button className="nav-btn" onClick={() => openNavigation(res.location.coordinates[1], res.location.coordinates[0])}>
                   <FiNavigation /> Navigate

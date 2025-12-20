@@ -15,6 +15,9 @@ import Profile from './components/User/Profile'
 import MissionController from './components/User/MissonController'
 import LiveMap from './components/User/LiveMap'
 import History from './components/User/History'
+import AvailableTasks from './components/Admin/AvailableTasks'
+import AdminDashBoard from './components/Admin/AdminDashBoard'
+import UserAvailableTaks from './components/User/AvailableTasks'
 
 function App() {
   return (
@@ -34,7 +37,9 @@ function App() {
           <Route path="/mission-controller" element={<MissionController />} />
           <Route path="/map" element={<LiveMap />} />
           <Route path="/history" element={<History />} />
-
+          <Route path="/available-tasks" element={<AvailableTasks />} />
+          <Route path="/admin-dashboard" element={<AdminDashBoard />} />
+<Route path="/missions" element={<UserAvailableTaks />} />
         </Route>
       </Routes>
     </Router>
