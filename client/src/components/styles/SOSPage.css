@@ -1,4 +1,3 @@
-/* --- GLOBAL WRAPPER --- */
 .sos-page-wrapper {
   min-height: 90vh;
   display: flex;
@@ -11,7 +10,6 @@
   background: radial-gradient(circle at top, rgba(220, 38, 38, 0.08), transparent 50%);
 }
 
-/* --- HEADER --- */
 .sos-header-pro { text-align: center; margin-bottom: 40px; width: 100%; animation: fadeInDown 0.6s ease-out; }
 @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -29,7 +27,6 @@
 
 .sos-header-pro h1 { font-size: 2rem; font-weight: 900; color: var(--text-main); margin: 0; letter-spacing: -0.5px; }
 
-/* --- STEP 1: ACTIVATION --- */
 .sos-step-container { display: flex; flex-direction: column; align-items: center; width: 100%; }
 .sos-ring-wrapper { position: relative; width: 240px; height: 240px; display: flex; align-items: center; justify-content: center; margin: 30px 0 50px 0; }
 
@@ -53,7 +50,6 @@
 .pulse-wave.delay { animation-delay: 0.8s; }
 @keyframes pulseOut { 0% { transform: scale(0.85); opacity: 0.8; } 100% { transform: scale(1.8); opacity: 0; } }
 
-/* System Readout */
 .system-readout {
   width: 100%; background: var(--bg-sidebar); border: 1px solid var(--border-color);
   border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);
@@ -78,7 +74,6 @@
 }
 .retry-btn:hover { border-color: var(--primary); color: var(--primary); }
 
-/* --- STEP 2: FORM --- */
 .sos-form-container { width: 100%; animation: slideUp 0.5s ease-out; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -91,7 +86,6 @@
 .card-header h3 { margin: 0; color: var(--text-main); font-size: 1.3rem; font-weight: 800; }
 .close-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
 
-/* Media Area */
 .media-area {
   background: #0f172a; border-radius: 12px; height: 220px; margin-bottom: 25px;
   overflow: hidden; position: relative; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center;
@@ -108,7 +102,6 @@
 .btn-icon { font-size: 1.8rem; }
 .divider { width: 1px; background: rgba(255,255,255,0.1); height: 50px; align-self: center; }
 
-/* Image Preview */
 .image-preview-wrapper { width: 100%; height: 100%; }
 .image-preview-wrapper img { width: 100%; height: 100%; object-fit: contain; }
 .preview-overlay { position: absolute; bottom: 10px; width: 100%; display: flex; justify-content: center; }
@@ -117,7 +110,6 @@
   padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 5px;
 }
 
-/* Webcam */
 .webcam-wrapper { width: 100%; height: 100%; position: relative; }
 .webcam-feed { width: 100%; height: 100%; object-fit: cover; }
 .cam-controls { position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; gap: 20px; align-items: center; }
@@ -125,7 +117,6 @@
 .cancel-cam { background: rgba(0,0,0,0.6); color: white; border: 1px solid white; padding: 6px 12px; border-radius: 10px; cursor: pointer; font-size: 0.8rem; }
 .switch-cam { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; padding: 8px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; }
 
-/* AI Scanner */
 .ai-scanner-overlay {
   position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8);
   z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #00ffcc;
@@ -135,14 +126,12 @@
 .scan-line { position: absolute; top: 0; width: 100%; height: 2px; background: #00ffcc; box-shadow: 0 0 15px #00ffcc; animation: scanMove 2s infinite linear; }
 @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; } }
 
-/* AI Result Bar */
 .ai-confidence-bar {
   background: #0f172a; color: #00ffcc; padding: 10px 15px; border-radius: 8px; margin-bottom: 20px;
   font-family: monospace; font-size: 0.85rem; display: flex; align-items: center; gap: 10px;
   border-left: 4px solid #00ffcc; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* Form Elements */
 .section-label { display: block; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; letter-spacing: 1px; }
 
 .type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
@@ -153,7 +142,6 @@
 .type-btn:hover { border-color: var(--primary); }
 .type-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
 
-/* Resource Box */
 .resource-box { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; margin-bottom: 25px; }
 .ai-header { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; }
 .ai-header svg { color: var(--primary); font-size: 1.1rem; }
@@ -173,14 +161,12 @@
 }
 .add-custom-item button { width: 40px; background: var(--text-main); color: var(--bg-sidebar); border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
 
-/* Textarea */
 .details-input {
   width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);
   background: var(--bg-main); color: var(--text-main); font-family: inherit; margin-bottom: 30px; resize: none; font-size: 0.95rem;
 }
 .details-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1); }
 
-/* Broadcast Button */
 .action-center { display: flex; justify-content: center; }
 .broadcast-btn {
   background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border: none;
@@ -192,7 +178,6 @@
 .broadcast-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(239, 68, 68, 0.5); }
 .btn-icon-small { font-size: 1.4rem; }
 
-/* --- STEP 3: SUCCESS --- */
 .sos-success-container { text-align: center; margin-top: 50px; animation: popIn 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
 @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 

@@ -10,9 +10,8 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
-import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 
-// 2. Map names to specific paths
 const pages = [
   { name: 'Home', path: '/' },
   { name: 'About Us', path: '/about' },
@@ -22,7 +21,6 @@ const pages = [
 function ResQLinkNavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   
-  // 3. Initialize the hook
   const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
@@ -33,7 +31,6 @@ function ResQLinkNavBar() {
     setAnchorElNav(null);
   };
 
-  // 4. Handle Navigation Logic
   const handleNavClick = (path) => {
     navigate(path);
     handleCloseNavMenu();
@@ -41,7 +38,7 @@ function ResQLinkNavBar() {
 
   const handleLoginClick = () => {
     console.log("Login Clicked");
-    navigate('/login'); // Assuming you have a login route
+    navigate('/login'); 
   };
 
   return (
@@ -49,13 +46,12 @@ function ResQLinkNavBar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           
-          {/* --- DESKTOP LOGO --- */}
           <HealthAndSafetyIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
             component="div"
-            onClick={() => navigate('/')} // Click logo goes home
+            onClick={() => navigate('/')} 
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -70,7 +66,6 @@ function ResQLinkNavBar() {
             ResQ-Link
           </Typography>
 
-          {/* --- MOBILE MENU (Hamburger) --- */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -105,14 +100,12 @@ function ResQLinkNavBar() {
                   <Typography textAlign="center">{page.name}</Typography>
                 </MenuItem>
               ))}
-              {/* Mobile Menu Login Button */}
               <MenuItem onClick={() => { handleCloseNavMenu(); handleLoginClick(); }}>
                   <Typography textAlign="center" color="primary" fontWeight="bold">LOGIN</Typography>
               </MenuItem>
             </Menu>
           </Box>
 
-          {/* --- MOBILE LOGO --- */}
           <HealthAndSafetyIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
@@ -134,7 +127,6 @@ function ResQLinkNavBar() {
             ResQ-Link
           </Typography>
 
-          {/* --- DESKTOP LINKS --- */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }}>
             {pages.map((page) => (
               <Button
@@ -147,7 +139,6 @@ function ResQLinkNavBar() {
             ))}
           </Box>
 
-          {/* --- DESKTOP LOGIN BUTTON --- */}
           <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
             <Button 
                 variant="outlined" 

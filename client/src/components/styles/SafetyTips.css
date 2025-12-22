@@ -5,7 +5,6 @@
   font-family: 'Inter', sans-serif;
 }
 
-/* Header */
 .safety-header {
   text-align: center;
   margin-bottom: 50px;
@@ -37,14 +36,12 @@
   margin: 0 auto;
 }
 
-/* Grid */
 .tips-grid {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Card */
 .tip-card {
   background: var(--bg-sidebar);
   border-radius: 16px;
@@ -65,7 +62,6 @@
   box-shadow: 0 15px 40px rgba(0,0,0,0.1);
 }
 
-/* Summary Section (Always Visible) */
 .tip-summary {
   display: flex;
   align-items: center;
@@ -109,16 +105,15 @@
   color: var(--primary);
 }
 
-/* Details Section (Accordion) */
 .tip-details {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.5s ease-in-out;
-  background: var(--bg-main); /* slightly darker inside */
+  background: var(--bg-main); 
 }
 
 .tip-card.active .tip-details {
-  max-height: 500px; /* Allows expansion */
+  max-height: 500px; 
   border-top: 1px solid var(--border-color);
 }
 
@@ -165,7 +160,6 @@
   margin-top: 2px;
 }
 
-/* Responsive */
 @media (max-width: 600px) {
   .tip-summary { padding: 20px; gap: 15px; }
   .tip-icon-box { width: 50px; height: 50px; font-size: 1.5rem; }

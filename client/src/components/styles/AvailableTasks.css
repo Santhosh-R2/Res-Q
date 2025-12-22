@@ -56,7 +56,6 @@
 }
 .btn-assign:hover { opacity: 0.9; }
 
-/* MODAL */
 .modal-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
@@ -100,14 +99,12 @@
   padding: 6px 14px; border-radius: 20px; font-size: 0.9rem;
 }
 
-/* GRID */
 .at-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 25px;
 }
 
-/* CARD */
 .at-card {
   background: var(--bg-sidebar);
   border: 1px solid var(--border-color);
@@ -119,7 +116,6 @@
 
 .at-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
 
-/* MAP PREVIEW */
 .at-map-preview {
   height: 160px;
   position: relative;
@@ -135,7 +131,6 @@
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-/* CONTENT */
 .at-content { padding: 20px; display: flex; flex-direction: column; flex: 1; }
 
 .at-top-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; color: var(--text-muted); }
@@ -164,7 +159,6 @@
 }
 .at-accept-btn:hover { background: #b71c1c; }
 
-/* EMPTY STATE */
 .at-empty {
   grid-column: 1 / -1;
   text-align: center; padding: 60px;

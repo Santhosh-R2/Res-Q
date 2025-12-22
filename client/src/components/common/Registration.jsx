@@ -5,7 +5,6 @@ import axiosInstance from '../api/baseUrl'; // Your Axios Instance
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Images
 import communityImg from '../../assets/AboutImg/volunters.jpg';
 import '../styles/Registration.css';
 
@@ -14,7 +13,6 @@ function Registration() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Form State
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -24,17 +22,14 @@ function Registration() {
     role: 'victim' 
   });
 
-  // Handle Input Change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle Role Selection
   const selectRole = (role) => {
     setFormData({ ...formData, role: role });
   };
 
-  // GSAP Animations
   useLayoutEffect(() => {
     let ctx = gsap.context(() => {
       gsap.fromTo(".reg-img-section", { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 1.2, ease: "power4.out" });
@@ -44,12 +39,9 @@ function Registration() {
     return () => ctx.revert();
   }, []);
 
-  // --- SUBMIT HANDLER ---
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // 1. Client-Side Validation
-    if(formData.password !== formData.confirmPassword) {
+        if(formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match!");
       return;
     }
@@ -65,13 +57,9 @@ function Registration() {
       const { confirmPassword, ...submitData } = formData;
       
       const response = await axiosInstance.post("auth/register", submitData);
-
-      // 3. Success Handling
       if(response.status === 201 || response.status === 200) {
         toast.success("Registration Successful! Redirecting...");
-        
-        // Optional: Auto-login after register (save token)
-        if(response.data.token) {
+                if(response.data.token) {
            localStorage.setItem('token', response.data.token);
            localStorage.setItem('userInfo', JSON.stringify(response.data));
         }
@@ -79,7 +67,6 @@ function Registration() {
         setTimeout(() => navigate('/dashboard'), 2000);
       }
     } catch (error) {
-      // 4. Error Handling
       console.error("Register Error:", error);
       const msg = error.response?.data?.message || "Registration Failed. Try again.";
       toast.error(msg);
@@ -92,7 +79,6 @@ function Registration() {
     <div className="reg-page-container" ref={comp}>
       <ToastContainer position="top-right" autoClose={3000} theme="colored" />
 
-      {/* --- LEFT SIDE: VISUALS --- */}
       <div className="reg-img-section">
         <div className="reg-overlay"></div>
         <img src={communityImg} alt="Community" className="reg-bg-img" />
@@ -107,7 +93,6 @@ function Registration() {
         </div>
       </div>
 
-      {/* --- RIGHT SIDE: FORM --- */}
       <div className="reg-form-section">
         <div className="reg-form-wrapper">
           
@@ -118,7 +103,6 @@ function Registration() {
 
           <form className="reg-form" onSubmit={handleSubmit}>
             
-            {/* ROLE SELECTOR */}
             <label className="field-label animate-field">I am joining as a:</label>
             <div className="role-grid animate-field">
               {['victim', 'volunteer', 'donor'].map((role) => (
@@ -135,7 +119,6 @@ function Registration() {
               ))}
             </div>
 
-            {/* INPUTS */}
             <div className="input-row animate-field">
               <div className="reg-input-group">
                 <label>Full Name</label>

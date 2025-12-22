@@ -4,10 +4,8 @@ import {
 } from 'recharts';
 import { FiArrowUp, FiArrowDown, FiAlertCircle, FiActivity, FiUsers, FiBox } from "react-icons/fi";
 
-// CSS
 import '../styles/Dashboard.css';
 
-// --- DUMMY DATA ---
 const activityData = [
   { name: 'Mon', sos: 12, rescues: 8 },
   { name: 'Tue', sos: 19, rescues: 15 },
@@ -31,7 +29,6 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       
-      {/* --- HEADER --- */}
       <header className="dash-header">
         <div>
           <h1>Mission Control</h1>
@@ -42,14 +39,13 @@ function Dashboard() {
         </div>
       </header>
 
-      {/* --- STAT CARDS ROW --- */}
       <div className="stats-grid">
         <StatCard 
           title="Active SOS" 
           value="42" 
           icon={<FiAlertCircle />} 
           trend="+12%" 
-          isPositive={false} // Red trend because more SOS is bad
+          isPositive={false} 
         />
         <StatCard 
           title="Lives Saved" 
@@ -74,10 +70,8 @@ function Dashboard() {
         />
       </div>
 
-      {/* --- CHARTS ROW --- */}
       <div className="charts-grid">
         
-        {/* Main Activity Chart */}
         <div className="chart-card main-chart">
           <h3>Rescue Operations vs SOS Signals</h3>
           <div className="chart-wrapper">
@@ -107,7 +101,6 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* Pie Chart */}
         <div className="chart-card pie-chart-container">
           <h3>Incident Distribution</h3>
           <div className="chart-wrapper">
@@ -130,7 +123,6 @@ function Dashboard() {
               </PieChart>
             </ResponsiveContainer>
             
-            {/* Custom Legend */}
             <div className="custom-legend">
               {incidentData.map((entry, index) => (
                 <div key={index} className="legend-item">
@@ -143,7 +135,6 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* --- RECENT ALERTS --- */}
       <div className="recent-section">
         <h3>Recent Critical Alerts</h3>
         <div className="alerts-list">
@@ -157,7 +148,6 @@ function Dashboard() {
   );
 }
 
-// --- HELPER COMPONENTS ---
 
 const StatCard = ({ title, value, icon, trend, isPositive }) => (
   <div className="stat-card">

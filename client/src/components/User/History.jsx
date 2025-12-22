@@ -10,7 +10,7 @@ import '../styles/History.css';
 function History() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // all, resolved, accepted
+  const [filter, setFilter] = useState('all'); 
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -41,14 +41,12 @@ function History() {
     return <span className="h-badge gray">{status}</span>;
   };
 
-  // Stats Calculation
   const totalMissions = history.length;
   const completedMissions = history.filter(h => h.status === 'resolved').length;
 
   return (
     <div className="hist-wrapper">
       
-      {/* HEADER & STATS */}
       <header className="hist-header">
         <div className="hist-title">
           <h1>Mission Log</h1>
@@ -73,7 +71,6 @@ function History() {
         </div>
       </header>
 
-      {/* FILTER BAR */}
       <div className="hist-controls">
         <div className="h-tabs">
           <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>All</button>
@@ -82,7 +79,6 @@ function History() {
         </div>
       </div>
 
-      {/* TIMELINE LIST */}
       <div className="hist-list">
         {loading ? <div className="hist-loader">Loading records...</div> : 
          filteredHistory.length === 0 ? <div className="hist-empty">No mission history found.</div> :

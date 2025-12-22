@@ -11,7 +11,6 @@ function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   
-  // Form State
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -45,10 +44,9 @@ function Profile() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // --- ROLE CHANGE HANDLER ---
   const handleRoleChange = async (e) => {
     const newRole = e.target.value;
-    setFormData({ ...formData, role: newRole }); // Optimistic update
+    setFormData({ ...formData, role: newRole }); 
 
     try {
       const token = localStorage.getItem('token');
@@ -61,16 +59,14 @@ function Profile() {
 
       toast.success(`System Access Changed to: ${newRole.toUpperCase()}`);
       
-      // Reload to update Sidebar
       setTimeout(() => window.location.reload(), 1000);
 
     } catch (error) {
       toast.error("Failed to change role");
-      setFormData({ ...formData, role: user.role }); // Revert
+      setFormData({ ...formData, role: user.role }); 
     }
   };
 
-  // --- SAVE PROFILE ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -93,7 +89,6 @@ function Profile() {
       
       <div className="pro-profile-grid">
         
-        {/* --- LEFT CARD: IDENTITY --- */}
         <aside className="pro-identity-card">
           <div className="id-card-bg"></div>
           <div className="id-avatar-container">
@@ -123,7 +118,6 @@ function Profile() {
           </div>
         </aside>
 
-        {/* --- RIGHT CARD: SETTINGS FORM --- */}
         <main className="pro-settings-card">
           <div className="settings-header">
             <h3>Account Settings</h3>

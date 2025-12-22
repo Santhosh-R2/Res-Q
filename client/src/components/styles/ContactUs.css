@@ -9,7 +9,6 @@
   --cnt-text: #334155;
 }
 
-/* === LENIS GLOBAL === */
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
@@ -24,7 +23,6 @@ html.lenis, html.lenis body { height: auto; }
   -webkit-font-smoothing: antialiased;
 }
 
-/* --- HEADER --- */
 .cnt-header {
   position: relative;
   text-align: center;
@@ -61,7 +59,6 @@ html.lenis, html.lenis body { height: auto; }
   line-height: 1.6;
 }
 
-/* --- LAYOUT --- */
 .cnt-container {
   max-width: 1150px;
   margin: 0 auto;
@@ -76,10 +73,9 @@ html.lenis, html.lenis body { height: auto; }
 
 .cnt-col {
   flex: 1;
-  will-change: transform, opacity; /* Performance optimization */
+  will-change: transform, opacity; 
 }
 
-/* --- LEFT COL: INFO --- */
 .cnt-info-col {
   display: flex;
   flex-direction: column;
@@ -144,7 +140,6 @@ html.lenis, html.lenis body { height: auto; }
   font-size: 0.95rem;
 }
 
-/* Image Wrapper */
 .cnt-img-wrapper {
   position: relative;
   border-radius: 20px;
@@ -165,7 +160,6 @@ html.lenis, html.lenis body { height: auto; }
   transform: scale(1.08);
 }
 
-/* --- RIGHT COL: FORM --- */
 .cnt-form {
   background: white;
   padding: 45px;
@@ -214,10 +208,9 @@ html.lenis, html.lenis body { height: auto; }
   color: var(--cnt-dark);
   background-color: #f8fafc;
   transition: all 0.3s ease;
-  box-sizing: border-box; /* Prevent padding overflow */
+  box-sizing: border-box; 
 }
 
-/* Focus States */
 .cnt-input-wrapper input:focus,
 .cnt-input-wrapper select:focus,
 .cnt-input-wrapper textarea:focus {
@@ -227,7 +220,6 @@ html.lenis, html.lenis body { height: auto; }
   box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.1);
 }
 
-/* Hover States */
 .cnt-input-wrapper input:hover,
 .cnt-input-wrapper select:hover,
 .cnt-input-wrapper textarea:hover {
@@ -261,7 +253,6 @@ html.lenis, html.lenis body { height: auto; }
   transform: translateY(0);
 }
 
-/* --- RESPONSIVE --- */
 @media (max-width: 900px) {
   .cnt-header h1 { font-size: 2.8rem; }
   
@@ -271,7 +262,7 @@ html.lenis, html.lenis body { height: auto; }
   }
   
   .cnt-img-wrapper {
-    height: 200px; /* Smaller image on mobile */
+    height: 200px;
   }
   
   .cnt-input-group {

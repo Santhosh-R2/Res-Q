@@ -9,7 +9,6 @@ import {
   FiTarget, FiMapPin, FiCheckSquare, FiClock, FiActivity, FiFilter, FiUserCheck, FiPackage, FiAlertTriangle, FiPhone
 } from "react-icons/fi";
 
-// Fix Leaflet Icons
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 let DefaultIcon = L.icon({ iconUrl: icon, shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
@@ -24,7 +23,6 @@ function MissionController() {
   const [selectedMission, setSelectedMission] = useState(null);
   const [currentUserId, setCurrentUserId] = useState(null);
 
-  // --- 1. INITIALIZE USER ---
   useEffect(() => {
     try {
       const user = JSON.parse(localStorage.getItem('userInfo'));
@@ -36,9 +34,7 @@ function MissionController() {
     }
   }, []);
 
-  // --- 2. FETCH DATA ---
   const fetchMissions = async () => {
-    // Only fetch if we know who the current user is (to filter properly)
     if (!currentUserId) return;
 
     setLoading(true);
@@ -48,7 +44,6 @@ function MissionController() {
       
       const response = await axiosInstance.get('/sos', config); 
       
-      // FILTER: Exclude my own requests
       const validMissions = response.data.filter(mission => {
         const creatorId = mission.userId?._id || mission.userId;
         return creatorId !== currentUserId;
@@ -65,14 +60,12 @@ function MissionController() {
     }
   };
 
-  // Trigger fetch when User ID is loaded
   useEffect(() => {
     if(currentUserId) {
       fetchMissions();
     }
   }, [currentUserId]);
 
-  // --- ACTIONS ---
   const updateStatus = async (id, newStatus) => {
     try {
       const updatedList = missions.map(m => m._id === id ? { ...m, status: newStatus } : m);
@@ -114,7 +107,6 @@ function MissionController() {
 
       <div className="mc-grid">
         
-        {/* --- LEFT PANEL --- */}
         <aside className="mc-sidebar-list">
           <div className="mc-filter-bar">
             <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>All</button>
@@ -152,7 +144,6 @@ function MissionController() {
           </div>
         </aside>
 
-        {/* --- RIGHT PANEL --- */}
         <main className="mc-main-view">
           {selectedMission ? (
             <>
@@ -177,7 +168,6 @@ function MissionController() {
 
               <div className="mc-details-grid">
                 
-                {/* MAP COLUMN */}
                 <div className="mc-left-col">
                   <div className="mc-map-box">
                     <MapContainer 
@@ -205,7 +195,6 @@ function MissionController() {
                   </div>
                 </div>
 
-                {/* INFO COLUMN */}
                 <div className="mc-info-box">
                   <div className="info-group">
                     <label>Incident Report</label>

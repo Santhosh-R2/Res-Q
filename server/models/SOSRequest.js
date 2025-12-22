@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const SOSRequestSchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    // ADD THIS LINE BELOW
     assignedVolunteer: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, 
     
     type: { type: String, required: true },
@@ -17,7 +16,7 @@ const SOSRequestSchema = new mongoose.Schema(
     },
     requiredItems: [{
       item: String,
-      status: { type: String, default: "pending" } // pending, dispatched
+      status: { type: String, default: "pending" } 
     }],
   },
   { 
@@ -27,7 +26,6 @@ const SOSRequestSchema = new mongoose.Schema(
   }
 );
 
-// Virtual for linked resources (already in your code)
 SOSRequestSchema.virtual('linkedResources', {
   ref: 'ResourceRequest',
   localField: '_id',

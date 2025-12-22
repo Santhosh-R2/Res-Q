@@ -1,13 +1,10 @@
 const ResourceRequest = require("../models/ResourceRequest");
 const User = require("../models/User");
 
-// @desc    Create Request
-// @route   POST /api/resources
 const createResourceRequest = async (req, res) => {
   try {
     const { items, urgency, notes, sosId } = req.body;
 
-    // 1. Validate Array
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: "Please add at least one item." });
     }
@@ -17,7 +14,7 @@ const createResourceRequest = async (req, res) => {
     const newRequest = await ResourceRequest.create({
       userId: req.user._id,
       sosId: sosId || null,
-      items: items, // Save the array of objects
+      items: items, 
       urgency,
       notes,
       status: "pending",
@@ -32,7 +29,6 @@ const createResourceRequest = async (req, res) => {
   }
 };
 
-// ... keep getMyResources and getAllResources ...
 const getMyResources = async (req, res) => {
   try {
     const requests = await ResourceRequest.find({ userId: req.user._id }).sort({ createdAt: -1 });
@@ -51,4 +47,4 @@ const getAllResources = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-module.exports = { createResourceRequest, getMyResources ,getAllResources}; // Add others if needed
+module.exports = { createResourceRequest, getMyResources ,getAllResources}; 

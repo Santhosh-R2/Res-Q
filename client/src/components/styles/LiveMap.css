@@ -1,13 +1,11 @@
-/* --- CONTAINER --- */
 .live-map-wrapper {
   position: relative;
   width: 100%;
-  height: calc(100vh - 60px); /* Adjust based on your header height */
+  height: calc(100vh - 60px);
   overflow: hidden;
   background: #f0f0f0;
 }
 
-/* Map Loader */
 .map-loader {
   display: flex;
   align-items: center;
@@ -18,14 +16,12 @@
   color: var(--text-muted);
 }
 
-/* --- FULLSCREEN MAP --- */
 .fullscreen-map {
   width: 100%;
   height: 100%;
   z-index: 1;
 }
 
-/* --- FLOATING CONTROLS PANEL --- */
 .map-controls {
   position: absolute;
   top: 20px;
@@ -36,7 +32,7 @@
   padding: 20px;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  z-index: 1000; /* Above Leaflet */
+  z-index: 1000; 
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
@@ -76,7 +72,6 @@
 
 @keyframes blink { 50% { opacity: 0; } }
 
-/* Filter Chips */
 .filter-chips {
   display: flex;
   gap: 8px;
@@ -113,7 +108,6 @@
 .dot.red { background: #ef4444; }
 .dot.orange { background: #f97316; }
 
-/* Legend */
 .map-legend {
   border-top: 1px solid #e2e8f0;
   padding-top: 15px;
@@ -132,7 +126,6 @@
 .icon-red { color: #ef4444; }
 .icon-orange { color: #f97316; }
 
-/* --- RE-CENTER BUTTON --- */
 .recenter-btn {
   position: absolute;
   bottom: 30px;
@@ -154,7 +147,6 @@
 }
 .recenter-btn:hover { transform: scale(1.1); color: #2563eb; }
 
-/* --- POPUP STYLING --- */
 .leaflet-popup-content-wrapper {
   border-radius: 12px;
   padding: 0;
@@ -210,7 +202,6 @@
 }
 .nav-btn:hover { background: #2563eb; }
 
-/* User Pulse Animation */
 .user-pulse-marker {
   animation: pulse-border 1.5s infinite;
   border-radius: 50%;
@@ -222,19 +213,17 @@
   100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .map-controls {
     top: auto;
     bottom: 20px;
     left: 10px;
-    right: 80px; /* Space for recenter btn */
+    right: 80px; 
     width: auto;
     padding: 15px;
   }
   .recenter-btn { bottom: 35px; right: 10px; }
 }
-/* --- USER LOCATION PULSE --- */
 .user-pulse-marker {
   background-color: #2563eb;
   border-radius: 50%;

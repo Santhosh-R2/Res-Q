@@ -23,7 +23,6 @@
   top: 20px;
 }
 
-/* === LEFT PANEL (Visuals) === */
 .login-left {
   flex: 1.1;
   position: relative;
@@ -47,7 +46,6 @@
   z-index: 1;
 }
 
-/* Glassmorphism Card */
 .glass-card {
   position: relative;
   z-index: 2;
@@ -99,7 +97,6 @@
 .stat h3 { margin: 0; font-size: 1.2rem; font-weight: 700; }
 .stat span { font-size: 0.8rem; text-transform: uppercase; opacity: 0.7; }
 
-/* === RIGHT PANEL (Form) === */
 .login-right {
   flex: 0.9;
   display: flex;
@@ -126,7 +123,6 @@
 }
 .form-header p { color: var(--slate); font-size: 1rem; margin: 0; position: relative; top: 24px; }
 
-/* Role Toggle */
 .role-toggle {
   display: flex;
   background: var(--light-bg);
@@ -165,7 +161,6 @@
 
 .slider.slide-right { transform: translateX(100%); }
 
-/* Inputs */
 .input-group { margin-bottom: 20px; }
 .input-group label {
   display: block;
@@ -191,7 +186,7 @@
 
 .input-wrapper input {
   width: 100%;
-  padding: 14px 14px 14px 45px; /* Space for icon */
+  padding: 14px 14px 14px 45px; 
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   font-size: 1rem;
@@ -206,7 +201,6 @@
   outline: none;
 }
 
-/* Extras */
 .form-extras {
   display: flex;
   justify-content: space-between;
@@ -218,7 +212,6 @@
 .form-extras a { color: var(--primary); text-decoration: none; font-weight: 600; }
 .checkbox { display: flex; align-items: center; gap: 8px; color: var(--slate); cursor: pointer; }
 
-/* Buttons */
 .login-btn {
   width: 100%;
   padding: 16px;
@@ -241,7 +234,6 @@
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
 }
 
-/* Social & Divider */
 .divider {
   display: flex;
   align-items: center;
@@ -289,24 +281,22 @@
   border-radius: 8px;
 }
 
-/* Responsive */
 @media (max-width: 900px) {
   .login-container { flex-direction: column; height: auto; }
-  .login-left { display: none; } /* Hide image on mobile for speed */
+  .login-left { display: none; } 
   .login-right { padding: 50px 20px; }
 }
-/* Add to src/styles/Login.css */
 
 .custom-select {
   width: 100%;
-  padding: 14px 14px 14px 45px; /* Matches input padding */
+  padding: 14px 14px 14px 45px;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   font-size: 1rem;
   background: #f8fafc;
   transition: all 0.3s ease;
   color: var(--dark-navy);
-  appearance: none; /* Removes default arrow */
+  appearance: none; 
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 1rem center;

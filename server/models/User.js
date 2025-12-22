@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema(
     },
    role: {
     type: String,
-    enum: ['victim', 'volunteer', 'donor', 'admin'], // <--- CHECK THESE VALUES
+    enum: ['victim', 'volunteer', 'donor', 'admin'], 
     default: 'victim',
   },
     location: {

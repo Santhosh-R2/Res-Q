@@ -5,8 +5,6 @@ import { auth, googleProvider } from '../../firebase';
 import { signInWithPopup } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css';
-
-// Images & Styles
 import googleLogo from '../../assets/LandingImg/google.png';
 import '../styles/Login.css';
 import axiosInstance from '../api/baseUrl';
@@ -23,7 +21,7 @@ function Login() {
   const [formData, setFormData] = useState({ 
     email: '', 
     password: '', 
-    role: 'victim' // Default role
+    role: 'victim' 
   });
 
   useLayoutEffect(() => {
@@ -38,7 +36,6 @@ function Login() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // --- GOOGLE LOGIN ---
   const handleGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
@@ -49,7 +46,6 @@ function Login() {
     }
   };
 
-  // --- EMAIL LOGIN ---
   const handleLogin = async (e) => {
     e.preventDefault();
     
@@ -62,24 +58,20 @@ function Login() {
     const route = isAdmin ? 'auth/admin-login' : 'auth/login';
 
     try {
-      // DEBUG LOG
       console.log("Sending Login Request:", formData);
 
       const response = await axiosInstance.post(route, formData);
       const data = response.data;
       
-      // Store Token & User Info
       localStorage.setItem('token', data.token);
       localStorage.setItem('userInfo', JSON.stringify(data));
 
       toast.success(`Login Successful! Entered as: ${data.role.toUpperCase()}`);
 
-      // Redirect logic
       setTimeout(() => {
         if(data.role === 'admin') {
           navigate('/admin-dashboard');
         } else {
-          // Force page reload to ensure Sidebar/Context updates with new role
           window.location.href = '/dashboard'; 
         }
       }, 1500);
@@ -96,8 +88,6 @@ function Login() {
   return (
     <div className="login-container" ref={comp}>
       <ToastContainer position="top-right" autoClose={3000} theme="colored" />
-
-      {/* LEFT PANEL */}
       <div className="login-left">
         <div className="bg-overlay"></div>
         <img src={rescueImg} alt="Disaster Relief" className="bg-image" />
@@ -110,7 +100,6 @@ function Login() {
         </div>
       </div>
 
-      {/* RIGHT PANEL */}
       <div className="login-right">
         <div className="login-content">
           
@@ -131,7 +120,6 @@ function Login() {
 
           <form onSubmit={handleLogin} className="modern-form">
             
-            {/* --- ROLE DROPDOWN --- */}
             {!isAdmin && (
               <div className="input-group">
                 <label>I want to login as:</label>

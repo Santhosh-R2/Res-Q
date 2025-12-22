@@ -2,22 +2,17 @@ import React, { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from '@studio-freight/lenis'; 
-
-// Images
 import helping from '../../assets/AboutImg/helping.jpg';
 import packing from '../../assets/AboutImg/packing.jpg';
 import volunters from '../../assets/AboutImg/volunters.jpg';
-
-// CSS
 import '../styles/AboutUs.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
 function AboutUs() {
-  const comp = useRef(null); // Scope ref
+  const comp = useRef(null);
 
   useLayoutEffect(() => {
-    // 1. SETUP LENIS (SMOOTH SCROLL)
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
@@ -32,17 +27,14 @@ function AboutUs() {
     }
     requestAnimationFrame(raf);
 
-    // Sync ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
     });
     gsap.ticker.lagSmoothing(0);
 
-    // 2. ANIMATIONS CONTEXT
     let ctx = gsap.context(() => {
       
-      // --- HERO ANIMATION ---
       const tlHero = gsap.timeline();
       tlHero.fromTo(".abt-hero-content > *",
         { y: 100, opacity: 0, clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" },
@@ -57,7 +49,6 @@ function AboutUs() {
         }
       );
 
-      // --- SECTION IMAGES & TEXT ---
       const sections = gsap.utils.toArray('.abt-content-section');
 
       sections.forEach((section) => {
@@ -65,7 +56,6 @@ function AboutUs() {
         const img = section.querySelector('.abt-image');
         const textItems = section.querySelectorAll('.abt-text-container > *');
 
-        // A. Image Parallax (Scale Down & Move)
         gsap.fromTo(img,
           { scale: 1.3, y: -40 },
           {
@@ -81,7 +71,6 @@ function AboutUs() {
           }
         );
 
-        // B. Image Reveal (Clip Path)
         gsap.fromTo(imgWrapper,
           { clipPath: "inset(0% 0% 100% 0%)" },
           {
@@ -95,7 +84,6 @@ function AboutUs() {
           }
         );
 
-        // C. Text Stagger
         gsap.fromTo(textItems,
           { y: 40, opacity: 0 },
           {
@@ -112,8 +100,6 @@ function AboutUs() {
         );
       });
 
-      // --- FULL WIDTH SECTION ---
-      // Parallax for the big image
       gsap.fromTo(".abt-full-width-img", 
         { scale: 1.2, y: -50 },
         { 
@@ -129,7 +115,6 @@ function AboutUs() {
         }
       );
 
-      // Stat Boxes Pop-up
       gsap.fromTo(".abt-stat-box",
         { y: 100, opacity: 0 },
         {
@@ -157,9 +142,7 @@ function AboutUs() {
   return (
     <div className="abt-page-wrapper" ref={comp}>
       
-      {/* --- HERO HEADER --- */}
       <div className="abt-hero-section">
-        {/* Abstract Background */}
         <div className="abt-hero-bg"></div>
         <div className="abt-hero-content">
           <span className="abt-hero-badge">About Us</span>
@@ -170,7 +153,6 @@ function AboutUs() {
         </div>
       </div>
 
-      {/* --- SECTION 1: WHO WE ARE (Image Left) --- */}
       <div className="abt-content-section">
         <div className="abt-container">
           <div className="abt-row">
@@ -195,7 +177,6 @@ function AboutUs() {
         </div>
       </div>
 
-      {/* --- SECTION 2: TRANSPARENCY (Image Right) --- */}
       <div className="abt-content-section abt-reverse">
         <div className="abt-container">
           <div className="abt-row">
@@ -221,7 +202,6 @@ function AboutUs() {
         </div>
       </div>
 
-      {/* --- SECTION 3: THE VOLUNTEERS (Full Width) --- */}
       <div className="abt-team-section">
         <div className="abt-container abt-center-text">
           <span className="abt-tag">The Heroes</span>

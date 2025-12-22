@@ -15,7 +15,6 @@ import { BiError, BiScan, BiRadar } from "react-icons/bi";
 import '../styles/SOSPage.css';
 import axiosInstance from '../api/baseUrl';
 
-// --- RESOURCE DATABASE ---
 const DISASTER_KNOWLEDGE = {
   'Fire': ['Fire Extinguisher', 'Burn Kit', 'Blankets', 'Water', 'Masks'],
   'Flood': ['Life Jackets', 'Rope', 'Dry Food', 'Flashlight', 'Boats'],
@@ -35,7 +34,6 @@ function SOSPage() {
   const [emergencyType, setEmergencyType] = useState('');
   const [isLocating, setIsLocating] = useState(true);
   
-  // AI State
   const [net, setNet] = useState(null);
   const [isModelLoading, setIsModelLoading] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -43,13 +41,11 @@ function SOSPage() {
   const [requestedItems, setRequestedItems] = useState([]);
   const [newItemName, setNewItemName] = useState("");
 
-  // Refs
   const webcamRef = useRef(null);
   const fileInputRef = useRef(null);
   const [showCamera, setShowCamera] = useState(false);
   const [facingMode, setFacingMode] = useState("environment");
 
-  // --- 1. AI LOADER ---
   useEffect(() => {
     const loadModel = async () => {
       try {
@@ -66,7 +62,6 @@ function SOSPage() {
     loadModel();
   }, []);
 
-  // --- 2. AI LOGIC ---
   const mapPredictionToDisaster = (predictions) => {
     if(!predictions || predictions.length === 0) return 'Other';
     const rawText = predictions.map(p => p.className.toLowerCase()).join(" ");
@@ -109,7 +104,6 @@ function SOSPage() {
     setRequestedItems(suggested.map(i => ({ item: i, status: 'pending' })));
   };
 
-  // --- 3. HIGH-PRECISION LOCATION LOGIC ---
   const fetchAddress = async (lat, lng) => {
     try {
       const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`;
@@ -147,7 +141,6 @@ function SOSPage() {
       }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 0 });
     };
 
-    // Attempt High Accuracy first
     navigator.geolocation.getCurrentPosition(success, error, { 
       enableHighAccuracy: true, timeout: 5000, maximumAge: 0 
     });
@@ -155,7 +148,6 @@ function SOSPage() {
 
   useEffect(() => { getLocation(); }, []);
 
-  // --- 4. HANDLERS ---
   const capturePhoto = useCallback(() => {
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot();
@@ -231,7 +223,6 @@ function SOSPage() {
   return (
     <div className="sos-page-wrapper">
       
-      {/* HEADER */}
       <header className="sos-header-pro">
         <div className="status-badge-container">
           <div className={`status-badge ${location ? 'online' : 'offline'}`}>
@@ -244,7 +235,6 @@ function SOSPage() {
         <h1>EMERGENCY COMMAND</h1>
       </header>
 
-      {/* STEP 1: ACTIVATION */}
       {step === 1 && (
         <div className="sos-step-container">
           <div className="sos-ring-wrapper">
@@ -277,7 +267,6 @@ function SOSPage() {
         </div>
       )}
 
-      {/* STEP 2: DETAILS FORM */}
       {step === 2 && (
         <div className="sos-form-container animate-fade-up">
           <div className="sos-pro-card">
@@ -287,7 +276,6 @@ function SOSPage() {
               <button className="close-btn" onClick={() => setStep(1)}><FiX /></button>
             </div>
 
-            {/* MEDIA AREA */}
             <div className={`media-area ${isAnalyzing ? 'scanning' : ''}`}>
               {isAnalyzing && (
                 <div className="ai-scanner-overlay">
@@ -328,14 +316,12 @@ function SOSPage() {
               )}
             </div>
 
-            {/* AI CONFIDENCE */}
             {aiPrediction && !isAnalyzing && image && (
               <div className="ai-confidence-bar">
                 <FiActivity /> <span>AI IDENTIFIED:</span> <strong>{aiPrediction.toUpperCase()}</strong>
               </div>
             )}
 
-            {/* TYPE GRID */}
             <label className="section-label">EMERGENCY TYPE</label>
             <div className="type-grid">
               {['Medical', 'Fire', 'Flood', 'Collapse', 'Violence', 'Other'].map((type) => (
@@ -349,7 +335,6 @@ function SOSPage() {
               ))}
             </div>
 
-            {/* RESOURCE ALLOCATION */}
             <div className="resource-box">
               <div className="ai-header">
                 <FiCpu /> <span>INTELLIGENT SUPPLY ALLOCATION</span>
@@ -374,11 +359,9 @@ function SOSPage() {
               </div>
             </div>
 
-            {/* DESCRIPTION */}
             <label className="section-label">ADDITIONAL INTEL</label>
             <textarea className="details-input" placeholder="Casualties, trapped persons, access routes..." value={description} onChange={(e) => setDescription(e.target.value)} rows="2"></textarea>
 
-            {/* BROADCAST BUTTON */}
             <div className="action-center">
               <button className="broadcast-btn" onClick={handleSubmit}>
                 <BiRadar className="btn-icon-small" /> BROADCAST ALERT
@@ -388,7 +371,6 @@ function SOSPage() {
         </div>
       )}
 
-      {/* STEP 3: SUCCESS */}
       {step === 3 && (
         <div className="sos-success-container animate-fade-up">
           <div className="pulse-success"><FiCheckCircle /></div>

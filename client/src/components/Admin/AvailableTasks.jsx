@@ -15,18 +15,16 @@ function AvailableTasks() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectedVolunteer, setSelectedVolunteer] = useState('');
 
-  // 1. Fetch Data
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       const [taskRes, volRes] = await Promise.all([
-        axiosInstance.get('/sos', config), // Fetches all active SOS
+        axiosInstance.get('/sos', config), 
         axiosInstance.get('/sos/volunteers-list', config)
       ]);
 
-      // Filter only unassigned tasks
       const unassigned = taskRes.data.filter(t => !t.assignedVolunteer && t.status === 'pending');
       setTasks(unassigned);
       setVolunteers(volRes.data);
@@ -39,14 +37,12 @@ function AvailableTasks() {
 
   useEffect(() => { fetchData(); }, []);
 
-  // 2. Open Modal
   const openAssignModal = (task) => {
     setSelectedTask(task);
-    setSelectedVolunteer(''); // Reset selection
+    setSelectedVolunteer(''); 
     setShowModal(true);
   };
 
-  // 3. Submit Assignment
   const handleAssign = async () => {
     if(!selectedVolunteer) return toast.warn("Select a volunteer");
 
@@ -59,7 +55,7 @@ function AvailableTasks() {
 
       toast.success("Task Assigned Successfully!");
       setShowModal(false);
-      fetchData(); // Refresh list
+      fetchData(); 
     } catch (error) {
       toast.error("Assignment Failed");
     }
@@ -106,7 +102,6 @@ function AvailableTasks() {
         )}
       </div>
 
-      {/* --- ASSIGN MODAL --- */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-box">

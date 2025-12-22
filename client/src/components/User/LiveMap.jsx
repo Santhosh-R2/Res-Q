@@ -11,7 +11,6 @@ import {
 
 import '../styles/LiveMap.css';
 
-// --- FIX LEAFLET MARKER PATHS ---
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -19,7 +18,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// --- CUSTOM MARKERS ---
 const createColoredIcon = (colorUrl) => {
   return new L.Icon({
     iconUrl: colorUrl,
@@ -31,20 +29,15 @@ const createColoredIcon = (colorUrl) => {
   });
 };
 
-// Red Marker for SOS
 const sosIcon = createColoredIcon('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png');
-
-// Orange Marker for Supplies
 const resourceIcon = createColoredIcon('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png');
 
-// Blue Pulse Dot for User
 const userIcon = new L.DivIcon({
   className: 'user-pulse-marker',
   iconSize: [20, 20],
   iconAnchor: [10, 10]
 });
 
-// --- HELPER TO FLY TO LOCATION ---
 function FlyToLocation({ center }) {
   const map = useMap();
   useEffect(() => {
@@ -60,9 +53,7 @@ function LiveMap() {
   const [filter, setFilter] = useState('all'); 
   const [loading, setLoading] = useState(true);
 
-  // 1. Get User Location & Data
   useEffect(() => {
-    // Get Location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -71,7 +62,7 @@ function LiveMap() {
         },
         () => {
           toast.error("Location Access Denied. Using Default Map.");
-          setUserLocation([20.5937, 78.9629]); // India Center
+          setUserLocation([20.5937, 78.9629]); 
           fetchData();
         }
       );
@@ -86,14 +77,13 @@ function LiveMap() {
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
-      // Fetch SOS and Resources in parallel
       const [sosRes, resRes] = await Promise.all([
         axiosInstance.get('/sos', config),
         axiosInstance.get('/resources', config)
       ]);
 
-      console.log("SOS Data:", sosRes.data); // Debug
-      console.log("Resource Data:", resRes.data); // Debug
+      console.log("SOS Data:", sosRes.data); 
+      console.log("Resource Data:", resRes.data); 
 
       setSosData(sosRes.data);
       setResourceData(resRes.data);
@@ -114,7 +104,6 @@ function LiveMap() {
   return (
     <div className="live-map-wrapper">
       
-      {/* FLOATING CONTROLS */}
       <div className="map-controls">
         <div className="control-header">
           <h3>Tactical Map</h3>
@@ -145,7 +134,6 @@ function LiveMap() {
         <FiCrosshair />
       </button>
 
-      {/* MAP */}
       <MapContainer 
         center={userLocation || [20.5937, 78.9629]} 
         zoom={13} 
@@ -159,14 +147,12 @@ function LiveMap() {
         
         {userLocation && <FlyToLocation center={userLocation} />}
 
-        {/* USER LOCATION (Blue Pulse) */}
         {userLocation && (
           <Marker position={userLocation} icon={userIcon}>
             <Popup>You are here</Popup>
           </Marker>
         )}
 
-        {/* --- SOS MARKERS (RED) --- */}
         {(filter === 'all' || filter === 'sos') && sosData.map(sos => (
           <Marker 
             key={sos._id} 
@@ -186,7 +172,6 @@ function LiveMap() {
           </Marker>
         ))}
 
-        {/* --- RESOURCE MARKERS (ORANGE) --- */}
         {(filter === 'all' || filter === 'resources') && resourceData.map(res => (
           <Marker 
             key={res._id} 
@@ -196,7 +181,6 @@ function LiveMap() {
             <Popup className="custom-popup">
               <div className="popup-content">
                 <span className="badge orange">Supply Request</span>
-                {/* Check if items exist before mapping */}
                 {res.items && res.items.length > 0 ? (
                    <h4>{res.items[0].itemCategory} + {res.items.length - 1} more</h4>
                 ) : (

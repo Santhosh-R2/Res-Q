@@ -5,7 +5,6 @@ import {
   FiWind, FiDroplet, FiActivity, FiThermometer, FiShield, FiPlus, FiMinus, 
   FiAlertTriangle, FiXCircle, FiBox 
 } from "react-icons/fi";
-// CSS
 import '../styles/SafetyTips.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -15,7 +14,7 @@ const tipsData = [
     id: 1,
     title: "Flood Safety",
     icon: <FiDroplet />,
-    color: "#3b82f6", // Blue
+    color: "#3b82f6", 
     summary: "Stay high, stay dry. Avoid electrical hazards.",
     steps: [
       "Move to higher ground immediately.",
@@ -29,7 +28,7 @@ const tipsData = [
     id: 2,
     title: "Earthquake Protocol",
     icon: <FiActivity />,
-    color: "#a855f7", // Purple
+    color: "#a855f7", 
     summary: "Drop, Cover, and Hold On.",
     steps: [
       "DROP to the ground; take COVER under a sturdy table.",
@@ -43,7 +42,7 @@ const tipsData = [
     id: 3,
     title: "Fire Emergency",
     icon: <FiThermometer />,
-    color: "#ef4444", // Red
+    color: "#ef4444", 
     summary: "Get out, stay out. Call for help.",
     steps: [
       "Crawl low under smoke to escape.",
@@ -57,7 +56,7 @@ const tipsData = [
     id: 4,
     title: "Cyclone / Hurricane",
     icon: <FiWind />,
-    color: "#06b6d4", // Cyan
+    color: "#06b6d4", 
     summary: "Secure your home. Stay indoors.",
     steps: [
       "Board up windows or use storm shutters.",
@@ -67,12 +66,11 @@ const tipsData = [
       "Wait for official 'All Clear' signal."
     ]
   },
-  // --- NEW CATEGORIES ADDED BELOW ---
   {
     id: 5,
     title: "Medical Emergency",
-    icon: <FiShield />, // Or use a Cross icon
-    color: "#10b981", // Green
+    icon: <FiShield />,
+    color: "#10b981",
     summary: "Check surroundings. Apply First Aid.",
     steps: [
       "Assess the scene for danger before approaching.",
@@ -86,8 +84,8 @@ const tipsData = [
   {
     id: 6,
     title: "Building Collapse",
-    icon: <FiAlertTriangle />, // You might need to import this
-    color: "#f59e0b", // Orange
+    icon: <FiAlertTriangle />, 
+    color: "#f59e0b", 
     summary: "Protect your head. Signal for help.",
     steps: [
       "If inside: Get under a sturdy desk or doorframe.",
@@ -100,8 +98,8 @@ const tipsData = [
   {
     id: 7,
     title: "Violence / Active Threat",
-    icon: <FiXCircle />, // Use an alert icon
-    color: "#be123c", // Dark Red
+    icon: <FiXCircle />, 
+    color: "#be123c", 
     summary: "Run, Hide, Fight.",
     steps: [
       "RUN: Escape if you can. Leave belongings behind.",
@@ -115,7 +113,7 @@ const tipsData = [
     id: 8,
     title: "General Preparedness",
     icon: <FiBox />, 
-    color: "#64748b", // Slate
+    color: "#64748b", 
     summary: "Always be ready for the unexpected.",
     steps: [
       "Keep a 'Go-Bag' packed (Documents, Meds, Cash).",
@@ -133,13 +131,11 @@ function SafetyTips() {
   const cardsRef = useRef([]);
 
   useEffect(() => {
-    // Header Animation
     gsap.fromTo(headerRef.current, 
       { y: -50, opacity: 0 }, 
       { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
     );
 
-    // Cards Stagger Animation
     gsap.fromTo(cardsRef.current, 
       { y: 50, opacity: 0 }, 
       { 

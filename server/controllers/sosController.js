@@ -1,14 +1,10 @@
 const SOSRequest = require("../models/SOSRequest");
 const User = require("../models/User");
 
-// @desc    Create a new SOS Alert
-// @route   POST /api/sos
-// @access  Private (Logged in users only)
 const createSOS = async (req, res) => {
   try {
     const { location, emergencyType, description, image ,requiredItems } = req.body;
 
-    // 1. Basic Validation
     if (!location || !location.lat || !location.lng) {
       return res.status(400).json({ message: "GPS Location is mandatory." });
     }
@@ -16,22 +12,20 @@ const createSOS = async (req, res) => {
       return res.status(400).json({ message: "Emergency Type is required." });
     }
 
-    // 2. Create the SOS Entry
     const sosEntry = await SOSRequest.create({
-      userId: req.user._id, // Comes from authMiddleware
+      userId: req.user._id, 
       type: emergencyType,
       description,
       image, 
        requiredItems: requiredItems || [],
       location: {
         type: "Point",
-        coordinates: [location.lng, location.lat], // MongoDB uses [Longitude, Latitude] order
+        coordinates: [location.lng, location.lat], 
         accuracy: location.accuracy,
       },
       status: "pending",
     });
 
-    // 3. (Optional) Update User's last known location
     await User.findByIdAndUpdate(req.user._id, {
         location: {
             type: "Point",
@@ -51,14 +45,11 @@ const createSOS = async (req, res) => {
   }
 };
 
-// @desc    Get all active SOS (For Dashboard/Map)
-// @route   GET /api/sos
-// @access  Private
 const getAllSOS = async (req, res) => {
   try {
     const alerts = await SOSRequest.find({ status: { $ne: 'resolved' } })
       .populate("userId", "fullName phone")
-      .populate("assignedVolunteer", "fullName phone") // Add this
+      .populate("assignedVolunteer", "fullName phone") 
       .populate("linkedResources")
       .sort({ createdAt: -1 });
 
@@ -70,7 +61,7 @@ const getAllSOS = async (req, res) => {
 const getMyRequests = async (req, res) => {
   try {
     const requests = await SOSRequest.find({ userId: req.user._id })
-      .populate('linkedResources') // <--- This attaches the items array!
+      .populate('linkedResources') 
       .sort({ createdAt: -1 });
 
     res.json(requests);
@@ -85,22 +76,18 @@ const updateSOSStatus = async (req, res) => {
 
     if (!sos) return res.status(404).json({ message: "SOS not found" });
 
-    // Update the status
     sos.status = status;
 
-    // Logic: If status is accepted, link the current user as the volunteer
     if (status === 'accepted') {
       sos.assignedVolunteer = req.user._id; 
     }
 
-    // Optional: If you want to clear the volunteer if it's set back to pending
     if (status === 'pending') {
       sos.assignedVolunteer = undefined;
     }
 
     await sos.save();
     
-    // Return the updated document populated with volunteer details if needed
     const updatedSos = await SOSRequest.findById(sos._id)
       .populate("userId", "fullName phone")
       .populate("assignedVolunteer", "fullName phone");
@@ -113,7 +100,6 @@ const updateSOSStatus = async (req, res) => {
 };
 const getVolunteerHistory = async (req, res) => {
   try {
-    // Find SOS requests where THIS user is the assigned volunteer
     const history = await SOSRequest.find({ assignedVolunteer: req.user._id })
       .populate("userId", "fullName phone")
       .sort({ updatedAt: -1 });
@@ -131,7 +117,7 @@ const assignTask = async (req, res) => {
     if (!sos) return res.status(404).json({ message: "Task not found" });
 
     sos.assignedVolunteer = volunteerId;
-    sos.status = "accepted"; // Auto-move to In Progress
+    sos.status = "accepted"; 
     await sos.save();
 
     res.json({ message: "Task Assigned Successfully", sos });

@@ -7,7 +7,6 @@ import L from 'leaflet';
 
 import { FiMapPin, FiClock, FiCheckCircle, FiShield, FiAlertCircle } from "react-icons/fi";
 
-// Fix Icons
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 let DefaultIcon = L.icon({ iconUrl: icon, shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
@@ -19,7 +18,6 @@ function AvailableTasks() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch Open Tasks
   const fetchTasks = async () => {
     setLoading(true);
     try {
@@ -27,7 +25,6 @@ function AvailableTasks() {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const res = await axiosInstance.get('/sos', config);
       
-      // Only show PENDING and UNASSIGNED tasks
       const openTasks = res.data.filter(t => t.status === 'pending' && !t.assignedVolunteer);
       setTasks(openTasks);
     } catch (error) {
@@ -39,7 +36,6 @@ function AvailableTasks() {
 
   useEffect(() => { fetchTasks(); }, []);
 
-  // Accept Task
   const handleAccept = async (id) => {
     try {
       const token = localStorage.getItem('token');
@@ -47,7 +43,7 @@ function AvailableTasks() {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success("Mission Accepted! Moved to Mission Control.");
-      fetchTasks(); // Refresh list
+      fetchTasks();
     } catch (error) {
       toast.error("Failed to accept task");
     }
@@ -75,14 +71,13 @@ function AvailableTasks() {
           tasks.map((task) => (
             <div key={task._id} className="at-card">
               
-              {/* MAP PREVIEW */}
               <div className="at-map-preview">
                 <MapContainer 
                   center={[task.location.coordinates[1], task.location.coordinates[0]]} 
                   zoom={13} 
                   zoomControl={false}
                   scrollWheelZoom={false}
-                  dragging={false} // Static map
+                  dragging={false} 
                   className="static-map"
                 >
                   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -93,7 +88,6 @@ function AvailableTasks() {
                 </div>
               </div>
 
-              {/* DETAILS */}
               <div className="at-content">
                 <div className="at-top-row">
                   <span className="at-time"><FiClock /> {new Date(task.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>

@@ -5,7 +5,6 @@ const ResourceRequestSchema = new mongoose.Schema(
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     sosId: { type: mongoose.Schema.Types.ObjectId, ref: "SOSRequest", default: null },
     
-    // --- UPDATED: Renamed 'type' to 'itemCategory' for safety ---
     items: [
       {
         itemCategory: { type: String, required: true }, 

@@ -10,29 +10,24 @@ import {
 } from "react-icons/fi";
 import { BiError } from "react-icons/bi"; 
 
-// CSS
 import '../styles/UserLayout.css';
 
 function UserLayout() {
   const navigate = useNavigate();
-  const location = useLocation(); // Hook to detect route changes
+  const location = useLocation(); 
   
-  // State
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Default closed on mobile
   const [userRole, setUserRole] = useState('victim');
   const [userName, setUserName] = useState('User');
 
-  // --- INITIALIZATION ---
   useEffect(() => {
-    // 1. Theme Check
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
       setIsDarkMode(true);
       document.body.setAttribute('data-theme', 'dark');
     }
 
-    // 2. Load User
     try {
       const storedUser = localStorage.getItem('userInfo');
       if (storedUser) {
@@ -42,7 +37,6 @@ function UserLayout() {
       }
     } catch (error) { console.error(error); }
 
-    // 3. Responsive Check (Open sidebar by default on Desktop)
     const handleResize = () => {
       if (window.innerWidth > 1024) {
         setIsSidebarOpen(true);
@@ -51,14 +45,12 @@ function UserLayout() {
       }
     };
 
-    // Run once on mount
     handleResize();
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // --- AUTO-CLOSE SIDEBAR ON MOBILE NAVIGATION ---
   useEffect(() => {
     if (window.innerWidth <= 1024) {
       setIsSidebarOpen(false);
@@ -81,7 +73,6 @@ function UserLayout() {
     navigate('/login');
   };
 
-  // --- MENUS ---
   const victimMenu = [
     { name: "Dashboard", icon: <FiHome />, path: "/dashboard" },
     { name: "My Requests", icon: <FiAlertCircle />, path: "/my-requests" },
@@ -126,16 +117,13 @@ function UserLayout() {
   return (
     <div className="layout-container">
       
-      {/* --- OVERLAY (For Mobile) --- */}
       <div 
         className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`}
         onClick={() => setIsSidebarOpen(false)}
       ></div>
 
-      {/* --- SIDEBAR --- */}
       <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         
-        {/* Header */}
         <div className="sidebar-header">
           <div className="brand-wrapper">
             <div className="logo-icon">R</div>
@@ -144,13 +132,11 @@ function UserLayout() {
               <span className="role-badge">{userRole.toUpperCase()}</span>
             </div>
           </div>
-          {/* Close Button (Mobile Only) */}
           <button className="close-sidebar-btn" onClick={() => setIsSidebarOpen(false)}>
             <FiX />
           </button>
         </div>
 
-        {/* SOS Button */}
         {userRole !== 'admin' && userRole !== 'donor' && (
           <div className="sos-wrapper">
             <button className="sos-btn-sidebar" onClick={() => navigate('/sos')}>
@@ -160,7 +146,6 @@ function UserLayout() {
           </div>
         )}
 
-        {/* Navigation */}
         <nav className="sidebar-nav">
           {currentMenu.map((item) => (
             <NavLink 
@@ -174,7 +159,6 @@ function UserLayout() {
           ))}
         </nav>
 
-        {/* Footer */}
         <div className="sidebar-footer">
           <div className="divider"></div>
           
@@ -190,10 +174,8 @@ function UserLayout() {
         </div>
       </aside>
 
-      {/* --- MAIN CONTENT --- */}
       <main className={`main-content ${isSidebarOpen ? 'shifted' : ''}`}>
         
-        {/* Mobile Header */}
         <header className="mobile-header">
           <div className="mobile-left">
             <button className="menu-toggle" onClick={() => setIsSidebarOpen(true)}>
@@ -204,7 +186,6 @@ function UserLayout() {
           <div className="user-avatar">{userName.charAt(0).toUpperCase()}</div>
         </header>
 
-        {/* Page Content */}
         <div className="page-content">
           <Outlet /> 
         </div>
