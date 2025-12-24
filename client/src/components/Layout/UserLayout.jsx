@@ -2,22 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-// Icons
 import { 
   FiHome, FiActivity, FiMapPin, FiBox, 
   FiUser, FiLogOut, FiMoon, FiSun, FiMenu,
-  FiShield, FiGift, FiDatabase, FiUsers, FiAlertCircle, FiClipboard, FiX
+  FiShield, FiGift, FiDatabase, FiUsers, FiAlertCircle, 
+  FiClipboard, FiX, FiTruck, FiList
 } from "react-icons/fi";
 import { BiError } from "react-icons/bi"; 
-
 import '../styles/UserLayout.css';
 
 function UserLayout() {
   const navigate = useNavigate();
-  const location = useLocation(); 
-  
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Default closed on mobile
+  const location = useLocation();
+    const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
   const [userRole, setUserRole] = useState('victim');
   const [userName, setUserName] = useState('User');
 
@@ -44,17 +42,13 @@ function UserLayout() {
         setIsSidebarOpen(false);
       }
     };
-
     handleResize();
-
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
-    if (window.innerWidth <= 1024) {
-      setIsSidebarOpen(false);
-    }
+    if (window.innerWidth <= 1024) setIsSidebarOpen(false);
   }, [location]);
 
   const toggleTheme = () => {
@@ -74,33 +68,34 @@ function UserLayout() {
   };
 
   const victimMenu = [
-    { name: "Dashboard", icon: <FiHome />, path: "/dashboard" },
-    { name: "My Requests", icon: <FiAlertCircle />, path: "/my-requests" },
-    { name: "Safety Tips", icon: <FiShield />, path: "/safety-tips" },
-    { name: "Profile", icon: <FiUser />, path: "/profile" },
+    { name: "My Dashboard", icon: <FiHome />, path: "/dashboard" },
+    { name: "Incident Log", icon: <FiAlertCircle />, path: "/my-requests" },
+    { name: "Safety Protocols", icon: <FiShield />, path: "/safety-tips" },
+    { name: "My Profile", icon: <FiUser />, path: "/profile" },
   ];
 
   const volunteerMenu = [
-    { name: "Mission Control", icon: <FiHome />, path: "/mission-controller" },
-   
+    { name: "My Dashboard", icon: <FiHome />, path: "/dashboard" },
+    { name: "Open Alerts", icon: <FiList />, path: "/mission-controller" },
     { name: "Live Map", icon: <FiMapPin />, path: "/map" },
-    { name: "History", icon: <FiActivity />, path: "/history" },
+    { name: "Global Inventory", icon: <FiDatabase />, path: "/inventory" },
+    { name: "Logistics & Delivery", icon: <FiTruck />, path: "/logistics" },
+    { name: "Mission History", icon: <FiActivity />, path: "/history" },
     { name: "Profile", icon: <FiUser />, path: "/profile" },
   ];
 
   const donorMenu = [
-    { name: "Dashboard", icon: <FiHome />, path: "/dashboard" },
-    { name: "Donate Items", icon: <FiGift />, path: "/donate" },
-    { name: "Track Donations", icon: <FiBox />, path: "/donations" },
+    { name: "My Dashboard", icon: <FiHome />, path: "/dashboard" }, 
+    { name: "Aid Marketplace", icon: <FiGift />, path: "/donate" },
+    { name: "Track Contributions", icon: <FiBox />, path: "/track-donations" },
     { name: "Profile", icon: <FiUser />, path: "/profile" },
   ];
 
   const adminMenu = [
-    { name: "Admin Panel", icon: <FiHome />, path: "/admin-dashboard" },
-    { name: "Users", icon: <FiUsers />, path: "/manage-users" },
-    { name: "Inventory", icon: <FiDatabase />, path: "/inventory" },
-    { name: "Global Map", icon: <FiMapPin />, path: "/admin-map" },
-    { name: "AvailableTasks", icon: <FiUser />, path: "/available-tasks" },
+    { name: "Dashboard", icon: <FiHome />, path: "/dashboard" },
+    { name: "Dispatch Command", icon: <FiClipboard />, path: "/available-tasks" },
+    { name: "User Database", icon: <FiUsers />, path: "/manage-users" },
+    { name: "Global Inventory", icon: <FiDatabase />, path: "/inventory" },
   ];
 
   const getMenu = () => {
@@ -115,80 +110,64 @@ function UserLayout() {
   const currentMenu = getMenu();
 
   return (
-    <div className="layout-container">
-      
+    <div className="sidemenu-layout-container">
       <div 
-        className={`sidebar-overlay ${isSidebarOpen ? 'active' : ''}`}
+        className={`sidemenu-layout-sidebar-overlay ${isSidebarOpen ? 'sidemenu-layout-active' : ''}`} 
         onClick={() => setIsSidebarOpen(false)}
       ></div>
 
-      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
-        
-        <div className="sidebar-header">
-          <div className="brand-wrapper">
-            <div className="logo-icon">R</div>
-            <div className="logo-details">
-              <span className="logo-text">ResQ-Link</span>
-              <span className="role-badge">{userRole.toUpperCase()}</span>
+      <aside className={`sidemenu-layout-sidebar ${isSidebarOpen ? 'sidemenu-layout-open' : ''}`}>
+        <div className="sidemenu-layout-sidebar-header">
+          <div className="sidemenu-layout-brand-wrapper">
+            <div className="sidemenu-layout-logo-icon">R</div>
+            <div className="sidemenu-layout-logo-details">
+              <span className="sidemenu-layout-logo-text">ResQ-Link</span>
+              <span className="sidemenu-layout-role-badge">{userRole.toUpperCase()}</span>
             </div>
           </div>
-          <button className="close-sidebar-btn" onClick={() => setIsSidebarOpen(false)}>
-            <FiX />
-          </button>
+          <button className="sidemenu-layout-close-sidebar-btn" onClick={() => setIsSidebarOpen(false)}><FiX /></button>
         </div>
 
         {userRole !== 'admin' && userRole !== 'donor' && (
-          <div className="sos-wrapper">
-            <button className="sos-btn-sidebar" onClick={() => navigate('/sos')}>
-              <BiError className="sos-icon" />
-              <span className="sos-text">EMERGENCY SOS</span>
+          <div className="sidemenu-layout-sos-wrapper">
+            <button className="sidemenu-layout-sos-btn-sidebar" onClick={() => navigate('/sos')}>
+              <BiError className="sidemenu-layout-sos-icon" /> <span className="sidemenu-layout-sos-text">EMERGENCY SOS</span>
             </button>
           </div>
         )}
 
-        <nav className="sidebar-nav">
+        <nav className="sidemenu-layout-sidebar-nav">
           {currentMenu.map((item) => (
             <NavLink 
               to={item.path} 
               key={item.name}
-              className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
+              className={({ isActive }) => isActive ? "sidemenu-layout-nav-item sidemenu-layout-active" : "sidemenu-layout-nav-item"}
             >
-              {item.icon}
-              <span className="nav-text">{item.name}</span>
+              {item.icon} <span className="sidemenu-layout-nav-text">{item.name}</span>
             </NavLink>
           ))}
         </nav>
 
-        <div className="sidebar-footer">
-          <div className="divider"></div>
-          
-          <div className="footer-item" onClick={toggleTheme}>
-            {isDarkMode ? <FiSun /> : <FiMoon />}
-            <span className="nav-text">{isDarkMode ? "Light Mode" : "Dark Mode"}</span>
+        <div className="sidemenu-layout-sidebar-footer">
+          <div className="sidemenu-layout-divider"></div>
+          <div className="sidemenu-layout-footer-item" onClick={toggleTheme}>
+            {isDarkMode ? <FiSun /> : <FiMoon />} <span className="sidemenu-layout-nav-text">{isDarkMode ? "Light Mode" : "Dark Mode"}</span>
           </div>
-
-          <div className="footer-item logout" onClick={handleLogout}>
-            <FiLogOut />
-            <span className="nav-text">Logout</span>
+          <div className="sidemenu-layout-footer-item sidemenu-layout-logout" onClick={handleLogout}>
+            <FiLogOut /> <span className="sidemenu-layout-nav-text">Logout</span>
           </div>
         </div>
       </aside>
 
-      <main className={`main-content ${isSidebarOpen ? 'shifted' : ''}`}>
-        
-        <header className="mobile-header">
-          <div className="mobile-left">
-            <button className="menu-toggle" onClick={() => setIsSidebarOpen(true)}>
-              <FiMenu />
-            </button>
-            <h3 className="mobile-logo">ResQ-Link</h3>
+      <main className={`sidemenu-layout-main-content ${isSidebarOpen ? 'sidemenu-layout-shifted' : ''}`}>
+        <header className="sidemenu-layout-mobile-header">
+          <div className="sidemenu-layout-mobile-left">
+            <button className="sidemenu-layout-menu-toggle" onClick={() => setIsSidebarOpen(true)}><FiMenu /></button>
+            <h3 className="sidemenu-layout-mobile-logo">ResQ-Link</h3>
           </div>
-          <div className="user-avatar">{userName.charAt(0).toUpperCase()}</div>
+          <div className="sidemenu-layout-user-avatar">{userName.charAt(0).toUpperCase()}</div>
         </header>
-
-        <div className="page-content">
-          <Outlet /> 
-        </div>
+        <div className="sidemenu-layout-page-content"><Outlet /></div>
       </main>
     </div>
   );

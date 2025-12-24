@@ -3,12 +3,11 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
 
-// Routes
 const authRoutes = require("./routes/authRoutes");
 const sosRoutes = require("./routes/sosRoutes");
 const resourceRoutes = require("./routes/resourceRoutes");
 const contactRoutes = require("./routes/contactRoutes");
-
+const Inventory = require("./routes/inventoryRoutes");
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -22,6 +21,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/sos", sosRoutes); 
 app.use("/api/resources", resourceRoutes); 
 app.use("/api/contact", contactRoutes);
+app.use("/api/inventory", Inventory);
+
 app.get("/", (req, res) => {
   res.send("ResQ-Link API is Running...");
 });

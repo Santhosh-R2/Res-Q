@@ -33,7 +33,7 @@ const sosIcon = createColoredIcon('https://raw.githubusercontent.com/pointhi/lea
 const resourceIcon = createColoredIcon('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png');
 
 const userIcon = new L.DivIcon({
-  className: 'user-pulse-marker',
+  className: 'Livemap-user-pulse-marker',
   iconSize: [20, 20],
   iconAnchor: [10, 10]
 });
@@ -76,19 +76,13 @@ function LiveMap() {
     try {
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: `Bearer ${token}` } };
-
       const [sosRes, resRes] = await Promise.all([
         axiosInstance.get('/sos', config),
         axiosInstance.get('/resources', config)
       ]);
-
-      console.log("SOS Data:", sosRes.data); 
-      console.log("Resource Data:", resRes.data); 
-
       setSosData(sosRes.data);
       setResourceData(resRes.data);
     } catch (error) {
-      console.error(error);
       toast.error("Failed to load live data");
     } finally {
       setLoading(false);
@@ -99,38 +93,38 @@ function LiveMap() {
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
   };
 
-  if (loading) return <div className="map-loader">Initializing Satellite Link...</div>;
+  if (loading) return <div className="Livemap-loader">Initializing Satellite Link...</div>;
 
   return (
-    <div className="live-map-wrapper">
+    <div className="Livemap-wrapper">
       
-      <div className="map-controls">
-        <div className="control-header">
+      <div className="Livemap-controls">
+        <div className="Livemap-control-header">
           <h3>Tactical Map</h3>
-          <span className="live-indicator"><span className="blink-dot"></span> LIVE</span>
+          <span className="Livemap-live-indicator"><span className="Livemap-blink-dot"></span> LIVE</span>
         </div>
         
-        <div className="filter-chips">
-          <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>All</button>
-          <button className={filter === 'sos' ? 'active' : ''} onClick={() => setFilter('sos')}>
-            <span className="dot red"></span> SOS
+        <div className="Livemap-filter-chips">
+          <button className={filter === 'all' ? 'Livemap-active' : ''} onClick={() => setFilter('all')}>All</button>
+          <button className={filter === 'sos' ? 'Livemap-active' : ''} onClick={() => setFilter('sos')}>
+            <span className="Livemap-dot Livemap-red"></span> SOS
           </button>
-          <button className={filter === 'resources' ? 'active' : ''} onClick={() => setFilter('resources')}>
-            <span className="dot orange"></span> Supplies
+          <button className={filter === 'resources' ? 'Livemap-active' : ''} onClick={() => setFilter('resources')}>
+            <span className="Livemap-dot Livemap-orange"></span> Supplies
           </button>
         </div>
 
-        <div className="map-legend">
-          <div className="legend-item">
-            <FiAlertCircle className="icon-red" /> {sosData.length} Active SOS
+        <div className="Livemap-legend">
+          <div className="Livemap-legend-item">
+            <FiAlertCircle className="Livemap-icon-red" /> {sosData.length} Active SOS
           </div>
-          <div className="legend-item">
-            <FiPackage className="icon-orange" /> {resourceData.length} Supply Requests
+          <div className="Livemap-legend-item">
+            <FiPackage className="Livemap-icon-orange" /> {resourceData.length} Supply Requests
           </div>
         </div>
       </div>
 
-      <button className="recenter-btn" onClick={() => userLocation && window.location.reload()} title="Refresh GPS">
+      <button className="Livemap-recenter-btn" onClick={() => userLocation && window.location.reload()} title="Refresh GPS">
         <FiCrosshair />
       </button>
 
@@ -138,7 +132,7 @@ function LiveMap() {
         center={userLocation || [20.5937, 78.9629]} 
         zoom={13} 
         zoomControl={false}
-        className="fullscreen-map"
+        className="Livemap-fullscreen-map"
       >
         <TileLayer
           attribution='&copy; OpenStreetMap contributors'
@@ -159,12 +153,12 @@ function LiveMap() {
             position={[sos.location.coordinates[1], sos.location.coordinates[0]]} 
             icon={sosIcon}
           >
-            <Popup className="custom-popup">
-              <div className="popup-content">
-                <span className="badge red">{sos.type} Emergency</span>
-                <h4>{sos.description ? sos.description.substring(0,40)+'...' : 'Emergency Request'}</h4>
+            <Popup className="Livemap-custom-popup">
+              <div className="Livemap-popup-content">
+                <span className="Livemap-badge Livemap-badge-red">{sos.type} Emergency</span>
+                <h4>{sos.description ? (sos.description.length > 40 ? sos.description.substring(0,40)+'...' : sos.description) : 'Emergency Request'}</h4>
                 <p>Status: <strong>{sos.status.toUpperCase()}</strong></p>
-                <button className="nav-btn" onClick={() => openNavigation(sos.location.coordinates[1], sos.location.coordinates[0])}>
+                <button className="Livemap-nav-btn" onClick={() => openNavigation(sos.location.coordinates[1], sos.location.coordinates[0])}>
                   <FiNavigation /> Navigate
                 </button>
               </div>
@@ -178,17 +172,16 @@ function LiveMap() {
             position={[res.location.coordinates[1], res.location.coordinates[0]]} 
             icon={resourceIcon}
           >
-            <Popup className="custom-popup">
-              <div className="popup-content">
-                <span className="badge orange">Supply Request</span>
+            <Popup className="Livemap-custom-popup">
+              <div className="Livemap-popup-content">
+                <span className="Livemap-badge Livemap-badge-orange">Supply Request</span>
                 {res.items && res.items.length > 0 ? (
                    <h4>{res.items[0].itemCategory} + {res.items.length - 1} more</h4>
                 ) : (
                    <h4>General Supplies</h4>
                 )}
-                
                 <p>Urgency: <strong>{res.urgency}</strong></p>
-                <button className="nav-btn" onClick={() => openNavigation(res.location.coordinates[1], res.location.coordinates[0])}>
+                <button className="Livemap-nav-btn" onClick={() => openNavigation(res.location.coordinates[1], res.location.coordinates[0])}>
                   <FiNavigation /> Navigate
                 </button>
               </div>

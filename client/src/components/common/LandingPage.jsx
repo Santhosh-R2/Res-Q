@@ -38,10 +38,11 @@ function LandingPage() {
       lenis.raf(time * 1000);
     });
     gsap.ticker.lagSmoothing(0);
+    
     let ctx = gsap.context(() => {
       
       const tlHero = gsap.timeline();
-      tlHero.fromTo(".hero-content > *", 
+      tlHero.fromTo(".Landing-hero-content > *", 
         { y: 50, opacity: 0, clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" },
         { 
           y: 0, 
@@ -53,12 +54,13 @@ function LandingPage() {
           delay: 0.2
         }
       );
-      const sections = gsap.utils.toArray('.zig-zag-section');
+
+      const sections = gsap.utils.toArray('.Landing-zig-zag-section');
 
       sections.forEach((section) => {
-        const imgWrapper = section.querySelector('.img-wrapper');
-        const img = section.querySelector('.feature-img');
-        const textItems = section.querySelectorAll('.text-wrapper > *');
+        const imgWrapper = section.querySelector('.Landing-img-wrapper');
+        const img = section.querySelector('.Landing-feature-img');
+        const textItems = section.querySelectorAll('.Landing-text-wrapper > *');
 
         gsap.fromTo(img,
           { scale: 1.3, y: -50 }, 
@@ -107,7 +109,6 @@ function LandingPage() {
 
     }, comp); 
 
-    // CLEANUP
     return () => {
       ctx.revert(); 
       lenis.destroy();
@@ -116,39 +117,39 @@ function LandingPage() {
   }, []);
 
   return (
-    <div className="landing-page-wrapper" ref={comp}>
+    <div className="Landing-page-wrapper" ref={comp}>
       
-      <section className="hero-section">
-        <div className="hero-bg" style={{ backgroundImage: `url(${rescue})` }}></div>
-        <div className="hero-overlay"></div>
+      <section className="Landing-hero-section">
+        <div className="Landing-hero-bg" style={{ backgroundImage: `url(${rescue})` }}></div>
+        <div className="Landing-hero-overlay"></div>
 
-        <div className="hero-content">
-          <div className="badge">AI-Powered Response</div>
+        <div className="Landing-hero-content">
+          <div className="Landing-badge">AI-Powered Response</div>
           <h1>ResQ-Link</h1>
           <h2>Decentralized Disaster Ecosystem</h2>
           <p>The bridge between distress and rescue. Real-time coordination for Victims, Volunteers, and NGOs.</p>
-          <div className="hero-buttons">
-            <button className="btn btn-primary">Request Help (SOS)</button>
-            <button className="btn btn-outline">Join Mission</button>
+          <div className="Landing-hero-buttons">
+            <button className="Landing-btn Landing-btn-primary">Request Help (SOS)</button>
+            <button className="Landing-btn Landing-btn-outline">Join Mission</button>
           </div>
         </div>
       </section>
 
-      <section className="zig-zag-section">
-        <div className="container">
-          <div className="row">
-            <div className="col img-column">
-              <div className="img-wrapper">
-                <img src={disaster} alt="Disaster Chaos" className="feature-img" />
+      <section className="Landing-zig-zag-section">
+        <div className="Landing-container">
+          <div className="Landing-row">
+            <div className="Landing-col Landing-img-column">
+              <div className="Landing-img-wrapper">
+                <img src={disaster} alt="Disaster Chaos" className="Landing-feature-img" />
               </div>
             </div>
-            <div className="col text-wrapper">
-              <span className="section-subtitle">The Challenge</span>
+            <div className="Landing-col Landing-text-wrapper">
+              <span className="Landing-section-subtitle">The Challenge</span>
               <h3>The Chaos of Crisis</h3>
               <p>
                 Traditional disaster management is fragmented. Victims scream into the void of social media while NGOs operate in silos. This leads to <strong>information bottlenecks</strong>.
               </p>
-              <div className="stat-box">
+              <div className="Landing-stat-box">
                 <h4>60%</h4>
                 <span>Delayed Response Time</span>
               </div>
@@ -157,21 +158,21 @@ function LandingPage() {
         </div>
       </section>
 
-      <section className="zig-zag-section reverse">
-        <div className="container">
-          <div className="row">
-            <div className="col img-column">
-              <div className="img-wrapper">
-                <img src={naturedisaster} alt="AI Technology" className="feature-img" />
+      <section className="Landing-zig-zag-section Landing-reverse">
+        <div className="Landing-container">
+          <div className="Landing-row">
+            <div className="Landing-col Landing-img-column">
+              <div className="Landing-img-wrapper">
+                <img src={naturedisaster} alt="AI Technology" className="Landing-feature-img" />
               </div>
             </div>
-            <div className="col text-wrapper">
-              <span className="section-subtitle">Our Solution</span>
+            <div className="Landing-col Landing-text-wrapper">
+              <span className="Landing-section-subtitle">Our Solution</span>
               <h3>AI-Driven Coordination</h3>
               <p>
                 ResQ-Link uses <strong>Deep Learning (CNN)</strong> to analyze disaster images and auto-prioritize severity. Our "Offline-First" PWA ensures SOS signals go through.
               </p>
-              <ul className="feature-list">
+              <ul className="Landing-feature-list">
                 <li>Real-time Geospatial Mapping</li>
                 <li>Automated Triage System</li>
               </ul>
@@ -180,16 +181,16 @@ function LandingPage() {
         </div>
       </section>
 
-      <section className="zig-zag-section">
-        <div className="container">
-          <div className="row">
-            <div className="col img-column">
-              <div className="img-wrapper">
-                <img src={figters} alt="Volunteers" className="feature-img" />
+      <section className="Landing-zig-zag-section">
+        <div className="Landing-container">
+          <div className="Landing-row">
+            <div className="Landing-col Landing-img-column">
+              <div className="Landing-img-wrapper">
+                <img src={figters} alt="Volunteers" className="Landing-feature-img" />
               </div>
             </div>
-            <div className="col text-wrapper">
-              <span className="section-subtitle">Ground Force</span>
+            <div className="Landing-col Landing-text-wrapper">
+              <span className="Landing-section-subtitle">Ground Force</span>
               <h3>The "Uber" for Rescue</h3>
               <p>
                 We replace manual call centers with algorithmic routing. Using the <strong>Haversine Algorithm</strong>, we connect the nearest volunteers to victims instantly.
@@ -199,16 +200,16 @@ function LandingPage() {
         </div>
       </section>
 
-      <section className="zig-zag-section reverse">
-        <div className="container">
-          <div className="row">
-            <div className="col img-column">
-              <div className="img-wrapper">
-                <img src={landscape} alt="Community" className="feature-img" />
+      <section className="Landing-zig-zag-section Landing-reverse">
+        <div className="Landing-container">
+          <div className="Landing-row">
+            <div className="Landing-col Landing-img-column">
+              <div className="Landing-img-wrapper">
+                <img src={landscape} alt="Community" className="Landing-feature-img" />
               </div>
             </div>
-            <div className="col text-wrapper">
-              <span className="section-subtitle">Transparent Aid</span>
+            <div className="Landing-col Landing-text-wrapper">
+              <span className="Landing-section-subtitle">Transparent Aid</span>
               <h3>Targeted Donations</h3>
               <p>
                 Don't just send money—fulfill specific needs. Our Inventory Management System allows donors to pledge specific items like blankets or medicine.
@@ -218,11 +219,11 @@ function LandingPage() {
         </div>
       </section>
 
-      <section className="cta-footer">
-        <div className="cta-content">
+      <section className="Landing-cta-footer">
+        <div className="Landing-cta-content">
           <h2>Ready to save lives?</h2>
           <p>Join the network today.</p>
-          <button className="btn btn-primary large">Launch App</button>
+          <button className="Landing-btn Landing-btn-primary Landing-large">Launch App</button>
         </div>
       </section>
     </div>

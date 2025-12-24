@@ -5,17 +5,16 @@ import { auth, googleProvider } from '../../firebase';
 import { signInWithPopup } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css';
-import googleLogo from '../../assets/LandingImg/google.png';
-import '../styles/Login.css';
-import axiosInstance from '../api/baseUrl';
 
-const rescueImg = "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=2670&auto=format&fit=crop";
+import googleLogo from '../../assets/LandingImg/google.png';
+import axiosInstance from '../api/baseUrl';
+import '../styles/Login.css';
+
+const rescueImg = "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?q=80&w=2000&auto=format&fit=crop";
 
 function Login() {
   const navigate = useNavigate();
   const comp = useRef(null);
-
-  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
   const [formData, setFormData] = useState({ 
@@ -26,8 +25,14 @@ function Login() {
 
   useLayoutEffect(() => {
     let ctx = gsap.context(() => {
-      gsap.fromTo(".login-left", { x: -100, opacity: 0 }, { x: 0, opacity: 1, duration: 1.2, ease: "power4.out" });
-      gsap.fromTo(".login-content > *", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, delay: 0.4, ease: "power3.out" });
+      gsap.fromTo(".login-left", 
+        { x: -50, opacity: 0 }, 
+        { x: 0, opacity: 1, duration: 1.2, ease: "power4.out" }
+      );
+      gsap.fromTo(".animate-item", 
+        { y: 30, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, delay: 0.3, ease: "power3.out" }
+      );
     }, comp);
     return () => ctx.revert();
   }, []);
@@ -50,34 +55,26 @@ function Login() {
     e.preventDefault();
     
     if (!formData.email || !formData.password) {
-      toast.warn("Please enter email and password.");
-      return;
+      return toast.warn("Please enter email and password.");
     }
 
     setIsLoading(true);
-    const route = isAdmin ? 'auth/admin-login' : 'auth/login';
 
     try {
-      console.log("Sending Login Request:", formData);
-
-      const response = await axiosInstance.post(route, formData);
+      const response = await axiosInstance.post('auth/login', formData);
       const data = response.data;
       
       localStorage.setItem('token', data.token);
       localStorage.setItem('userInfo', JSON.stringify(data));
 
-      toast.success(`Login Successful! Entered as: ${data.role.toUpperCase()}`);
+      toast.success(`Login Successful! Accessing as: ${data.role.toUpperCase()}`);
 
       setTimeout(() => {
-        if(data.role === 'admin') {
-          navigate('/admin-dashboard');
-        } else {
-          window.location.href = '/dashboard'; 
-        }
+        if(data.role === 'admin') navigate('/dashboard');
+        else window.location.href = '/dashboard'; 
       }, 1500);
 
     } catch (error) {
-      console.error("Login Error:", error);
       const msg = error.response?.data?.message || "Invalid Credentials";
       toast.error(msg);
     } finally {
@@ -86,105 +83,110 @@ function Login() {
   };
 
   return (
-    <div className="login-container" ref={comp}>
+    <div className="login-page-wrapper" ref={comp}>
       <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+
       <div className="login-left">
-        <div className="bg-overlay"></div>
-        <img src={rescueImg} alt="Disaster Relief" className="bg-image" />
-        <div className="left-content">
-          <div className="glass-card">
-            <div className="logo-badge">ResQ-Link AI</div>
-            <h1>Bridging Distress & Response.</h1>
-            <p>A decentralized ecosystem connecting victims, volunteers, and NGOs in real-time.</p>
+        <div className="login-overlay"></div>
+        <img src={rescueImg} alt="Disaster Response" className="login-bg-img" />
+        
+        <div className="login-brand-content animate-item">
+          <div className="brand-pill">ResQ-Link Ecosystem</div>
+          <h1>Unified Response Platform.</h1>
+          <p>Connecting Victims, Volunteers, and Coordinators in one secure network.</p>
+          <div className="feature-tags">
+            <span>🌍 Geo-Tracking</span>
+            <span>🤖 AI Triage</span>
+            <span>📦 Logistics</span>
           </div>
         </div>
       </div>
 
       <div className="login-right">
-        <div className="login-content">
+        <div className="login-form-container">
           
-          <div className="form-header">
-            <h2>{isAdmin ? "Command Center" : "Welcome Back"}</h2>
-            <p>{isAdmin ? "Restricted access for Coordinators." : "Sign in to access your dashboard."}</p>
+          <div className="login-header animate-item">
+            <h2>Welcome Back</h2>
+            <p>Please sign in to continue.</p>
           </div>
 
-          <div className="role-toggle">
-            <div className={`toggle-option ${!isAdmin ? 'active' : ''}`} onClick={() => setIsAdmin(false)}>
-              General User
-            </div>
-            <div className={`toggle-option ${isAdmin ? 'active' : ''}`} onClick={() => setIsAdmin(true)}>
-              Admin / NGO
-            </div>
-            <div className={`slider ${isAdmin ? 'slide-right' : ''}`}></div>
-          </div>
-
-          <form onSubmit={handleLogin} className="modern-form">
+          <form onSubmit={handleLogin} className="login-form">
             
-            {!isAdmin && (
-              <div className="input-group">
-                <label>I want to login as:</label>
-                <div className="input-wrapper">
-                  <span className="icon">🎭</span>
-                  <select 
-                    name="role" 
-                    value={formData.role} 
-                    onChange={handleChange}
-                    className="custom-select"
-                    style={{ fontWeight: '600', color: '#d32f2f' }}
-                  >
-                    <option value="victim">Victim (Get Help)</option>
-                    <option value="volunteer">Volunteer (Give Help)</option>
-                    <option value="donor">Donor (Give Items)</option>
-                  </select>
-                </div>
+            <div className="input-block animate-item">
+              <label>I am a...</label>
+              <div className="input-wrapper">
+                <span className="input-icon">🎭</span>
+                <select 
+                  name="role" 
+                  value={formData.role} 
+                  onChange={handleChange}
+                  className="custom-select"
+                >
+                  <option value="victim">Victim (Requesting Help)</option>
+                  <option value="volunteer">Volunteer (Providing Aid)</option>
+                  <option value="donor">Donor (Giving Supplies)</option>
+                 
+                </select>
               </div>
-            )}
+            </div>
 
-            <div className="input-group">
+            <div className="input-block animate-item">
               <label>Email Address</label>
               <div className="input-wrapper">
-                <span className="icon">✉️</span>
+                <span className="input-icon">✉️</span>
                 <input 
-                  type="email" name="email" 
-                  value={formData.email} onChange={handleChange} 
-                  required placeholder="name@example.com"
+                  type="email" 
+                  name="email" 
+                  placeholder="name@example.com" 
+                  value={formData.email}
+                  onChange={handleChange}
+                  required 
                 />
               </div>
             </div>
 
-            <div className="input-group">
+            <div className="input-block animate-item">
               <label>Password</label>
               <div className="input-wrapper">
-                <span className="icon">🔒</span>
+                <span className="input-icon">🔒</span>
                 <input 
-                  type="password" name="password" 
-                  value={formData.password} onChange={handleChange} 
-                  required placeholder="••••••••"
+                  type="password" 
+                  name="password" 
+                  placeholder="••••••••" 
+                  value={formData.password}
+                  onChange={handleChange}
+                  required 
                 />
               </div>
             </div>
 
-            <div className="form-extras">
-              <label className="checkbox"><input type="checkbox" /> Remember me</label>
+            <div className="form-options animate-item">
+              <label className="remember-me">
+                <input type="checkbox" /> Remember me
+              </label>
               <Link to="/forgot-password">Forgot Password?</Link>
             </div>
 
-            <button type="submit" className={`login-btn ${isAdmin ? 'btn-admin' : ''}`} disabled={isLoading}>
-              {isLoading ? "Authenticating..." : (isAdmin ? "Access Dashboard" : "Sign In")}
+            <button 
+              type="submit" 
+              className="submit-btn animate-item" 
+              disabled={isLoading}
+            >
+              {isLoading ? "Authenticating..." : "Sign In"}
             </button>
           </form>
 
-          {!isAdmin && (
-            <>
-              <div className="divider"><span>OR</span></div>
-              <button className="google-btn" onClick={handleGoogle}>
-                <img src={googleLogo} alt="G" /> Sign in with Google
-              </button>
-              <div className="register-link">Don't have an account? <Link to="/register">Create free account</Link></div>
-            </>
-          )}
-          
-          {isAdmin && <div className="security-notice"><span>🔒 256-bit Secure Connection</span></div>}
+          {/* <div className="social-login-section animate-item">
+            <div className="divider"><span>OR</span></div>
+            <button className="google-auth-btn" onClick={handleGoogle}>
+              <img src={googleLogo} alt="G" /> 
+              <span>Continue with Google</span>
+            </button>
+           
+          </div> */}
+ <p className="signup-text">
+              New here? <Link to="/register">Create an account</Link>
+            </p>
         </div>
       </div>
     </div>

@@ -36,7 +36,7 @@ function AboutUs() {
     let ctx = gsap.context(() => {
       
       const tlHero = gsap.timeline();
-      tlHero.fromTo(".abt-hero-content > *",
+      tlHero.fromTo(".About-hero-content > *",
         { y: 100, opacity: 0, clipPath: "polygon(0 0, 100% 0, 100% 0, 0 0)" },
         {
           y: 0,
@@ -49,12 +49,12 @@ function AboutUs() {
         }
       );
 
-      const sections = gsap.utils.toArray('.abt-content-section');
+      const sections = gsap.utils.toArray('.About-content-section');
 
       sections.forEach((section) => {
-        const imgWrapper = section.querySelector('.abt-img-wrapper');
-        const img = section.querySelector('.abt-image');
-        const textItems = section.querySelectorAll('.abt-text-container > *');
+        const imgWrapper = section.querySelector('.About-img-wrapper');
+        const img = section.querySelector('.About-image');
+        const textItems = section.querySelectorAll('.About-text-container > *');
 
         gsap.fromTo(img,
           { scale: 1.3, y: -40 },
@@ -100,14 +100,14 @@ function AboutUs() {
         );
       });
 
-      gsap.fromTo(".abt-full-width-img", 
+      gsap.fromTo(".About-full-width-img", 
         { scale: 1.2, y: -50 },
         { 
           scale: 1,
           y: 50,
           ease: "none",
           scrollTrigger: {
-            trigger: ".abt-team-section",
+            trigger: ".About-team-section",
             start: "top bottom",
             end: "bottom top",
             scrub: true
@@ -115,7 +115,7 @@ function AboutUs() {
         }
       );
 
-      gsap.fromTo(".abt-stat-box",
+      gsap.fromTo(".About-stat-box",
         { y: 100, opacity: 0 },
         {
           y: 0,
@@ -124,7 +124,7 @@ function AboutUs() {
           stagger: 0.15,
           ease: "back.out(1.7)",
           scrollTrigger: {
-            trigger: ".abt-stat-grid",
+            trigger: ".About-stat-grid",
             start: "top 90%",
           }
         }
@@ -140,29 +140,29 @@ function AboutUs() {
   }, []);
 
   return (
-    <div className="abt-page-wrapper" ref={comp}>
+    <div className="About-page-wrapper" ref={comp}>
       
-      <div className="abt-hero-section">
-        <div className="abt-hero-bg"></div>
-        <div className="abt-hero-content">
-          <span className="abt-hero-badge">About Us</span>
-          <h1 className="abt-title">Bridging Chaos<br />& Coordination</h1>
-          <p className="abt-subtitle">
+      <div className="About-hero-section">
+        <div className="About-hero-bg"></div>
+        <div className="About-hero-content">
+          <span className="About-hero-badge">About Us</span>
+          <h1 className="About-title">Bridging Chaos<br />& Coordination</h1>
+          <p className="About-subtitle">
             ResQ-Link isn't just an app. It's a decentralized nervous system designed to save lives when infrastructure fails.
           </p>
         </div>
       </div>
 
-      <div className="abt-content-section">
-        <div className="abt-container">
-          <div className="abt-row">
-            <div className="abt-col abt-img-col">
-              <div className="abt-img-wrapper">
-                <img src={helping} alt="Helping hands" className="abt-image" />
+      <div className="About-content-section">
+        <div className="About-container">
+          <div className="About-row">
+            <div className="About-col About-img-col">
+              <div className="About-img-wrapper">
+                <img src={helping} alt="Helping hands" className="About-image" />
               </div>
             </div>
-            <div className="abt-col abt-text-container">
-              <span className="abt-tag">Our Story</span>
+            <div className="About-col About-text-container">
+              <span className="About-tag">Our Story</span>
               <h2>Born from Necessity</h2>
               <p>
                 During recent floods, we witnessed a massive disconnect. People wanted to help, 
@@ -177,11 +177,11 @@ function AboutUs() {
         </div>
       </div>
 
-      <div className="abt-content-section abt-reverse">
-        <div className="abt-container">
-          <div className="abt-row">
-            <div className="abt-col abt-text-container">
-              <span className="abt-tag">Our Values</span>
+      <div className="About-content-section About-reverse">
+        <div className="About-container">
+          <div className="About-row">
+            <div className="About-col About-text-container">
+              <span className="About-tag">Our Values</span>
               <h2>Radical Transparency</h2>
               <p>
                 Donation scams destroy trust. That's why we built the 
@@ -193,38 +193,38 @@ function AboutUs() {
                 tracking it until it reaches the hands of those in need.
               </p>
             </div>
-            <div className="abt-col abt-img-col">
-              <div className="abt-img-wrapper">
-                <img src={packing} alt="Packing supplies" className="abt-image" />
+            <div className="About-col About-img-col">
+              <div className="About-img-wrapper">
+                <img src={packing} alt="Packing supplies" className="About-image" />
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="abt-team-section">
-        <div className="abt-container abt-center-text">
-          <span className="abt-tag">The Heroes</span>
+      <div className="About-team-section">
+        <div className="About-container About-center-text">
+          <span className="About-tag">The Heroes</span>
           <h2>Powered by People</h2>
-          <p className="abt-desc-lg">
+          <p className="About-desc-lg">
             Algorithms optimize the route, but volunteers drive the rescue. 
             Our platform empowers everyday citizens to become first responders.
           </p>
           
-          <div className="abt-hero-image-wrapper">
-               <img src={volunters} alt="Group of volunteers" className="abt-full-width-img" />
+          <div className="About-hero-image-wrapper">
+               <img src={volunters} alt="Group of volunteers" className="About-full-width-img" />
           </div>
 
-          <div className="abt-stat-grid">
-             <div className="abt-stat-box">
+          <div className="About-stat-grid">
+             <div className="About-stat-box">
                 <h3>10k+</h3>
                 <span>Lives Impacted</span>
              </div>
-             <div className="abt-stat-box">
+             <div className="About-stat-box">
                 <h3>500+</h3>
                 <span>Volunteers</span>
              </div>
-             <div className="abt-stat-box">
+             <div className="About-stat-box">
                 <h3>24/7</h3>
                 <span>Active Response</span>
              </div>

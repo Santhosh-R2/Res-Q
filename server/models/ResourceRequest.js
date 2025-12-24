@@ -4,14 +4,19 @@ const ResourceRequestSchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     sosId: { type: mongoose.Schema.Types.ObjectId, ref: "SOSRequest", default: null },
-    
+
     items: [
       {
-        itemCategory: { type: String, required: true }, 
+        itemCategory: { type: String, required: true },
         quantity: { type: String, required: true }
       }
     ],
-    
+    donorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null
+    },
+
     urgency: {
       type: String,
       enum: ["Low", "Medium", "High"],

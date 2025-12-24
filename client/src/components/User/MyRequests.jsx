@@ -7,10 +7,9 @@ import L from 'leaflet';
 
 import { 
   FiClock, FiMapPin, FiCheckCircle, FiXCircle, FiActivity, FiChevronDown, FiChevronUp, 
-  FiImage, FiPlusCircle, FiX, FiPackage, FiTrash2
+  FiImage, FiPlusCircle, FiX, FiPackage, FiTrash2, FiCpu
 } from "react-icons/fi";
 
-// --- LEAFLET ICON FIX ---
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
@@ -72,7 +71,7 @@ function MyRequests() {
     if(!currentItem.quantity.trim()) return toast.warn("Please enter quantity");
     
     setItemList([...itemList, currentItem]);
-    setCurrentItem({ ...currentItem, quantity: '' }); 
+    setCurrentItem({ ...currentItem, quantity: '' });
   };
 
   const removeItemFromList = (index) => {
@@ -108,7 +107,6 @@ function MyRequests() {
       setShowModal(false);
       fetchRequests(); 
     } catch (error) {
-      console.error(error);
       toast.error(error.response?.data?.message || "Failed to send request");
     }
   };
@@ -124,6 +122,15 @@ function MyRequests() {
         {icon} {status.toUpperCase()}
       </span>
     );
+  };
+
+  const getItemCount = (req) => {
+    let count = 0;
+    if (req.requiredItems) count += req.requiredItems.length;
+    if (req.linkedResources) {
+      req.linkedResources.forEach(res => count += res.items.length);
+    }
+    return count;
   };
 
   return (
@@ -143,6 +150,7 @@ function MyRequests() {
           requests.map((req) => (
             <div key={req._id} className={`my-req-card ${expandedId === req._id ? 'open' : ''}`}>
               
+              {/* CARD SUMMARY */}
               <div className="my-req-summary" onClick={() => toggleExpand(req._id)}>
                 <div className="my-req-summary-left">
                   <div className={`my-req-severity-bar ${req.type.toLowerCase()}`}></div>
@@ -153,13 +161,11 @@ function MyRequests() {
                 </div>
                 
                 <div className="my-req-summary-right">
-                  {/* RESOURCE BADGE (Shows count of linked item requests) */}
-                  {req.linkedResources && req.linkedResources.length > 0 && (
+                  {getItemCount(req) > 0 && (
                     <span className="my-req-resource-count">
-                      <FiPackage /> {req.linkedResources.length}
+                      <FiPackage /> {getItemCount(req)}
                     </span>
                   )}
-                  
                   {getStatusBadge(req.status)}
                   <div className="my-req-chevron">{expandedId === req._id ? <FiChevronUp /> : <FiChevronDown />}</div>
                 </div>
@@ -194,35 +200,55 @@ function MyRequests() {
                     
                     <div className="my-req-resources-section">
                       <div className="my-req-res-header">
-                        <label>Requested Supplies</label>
+                        <label>Supply Logistics</label>
                         <button className="my-req-add-btn" onClick={() => openRequestModal(req._id)}>
                           <FiPlusCircle /> Add Needs
                         </button>
                       </div>
 
-                      {req.linkedResources && req.linkedResources.length > 0 ? (
-                        <div className="my-req-res-grid">
-                          {req.linkedResources.map((res) => (
-                            <div key={res._id} className="my-req-mini-card">
-                              <div className="my-req-mini-top">
-                                <span className={`my-req-mini-urgency ${res.urgency.toLowerCase()}`}>{res.urgency}</span>
-                                <span className="my-req-mini-status">{res.status}</span>
-                              </div>
-                              <div className="my-req-mini-items">
-                                {res.items.map((item, idx) => (
-                                  <div key={idx} className="my-req-mini-row">
-                                    <FiPackage size={12}/> {item.itemCategory}: <strong>{item.quantity}</strong>
-                                  </div>
-                                ))}
-                              </div>
+                      <div className="my-req-res-grid">
+                        
+                        {req.requiredItems && req.requiredItems.length > 0 && (
+                          <div className="my-req-mini-card ai-card">
+                            <div className="my-req-mini-top">
+                              <span className="my-req-mini-urgency ai">
+                                <FiCpu /> AI DETECTED NEEDS
+                              </span>
+                              <span className="my-req-mini-status">Pending</span>
                             </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="my-req-no-res">
-                          <p>No supplies requested yet.</p>
-                        </div>
-                      )}
+                            <div className="my-req-mini-items">
+                              {req.requiredItems.map((item, idx) => (
+                                <div key={idx} className="my-req-mini-row">
+                                  <FiPackage size={12}/> {item.item || item} 
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {req.linkedResources && req.linkedResources.map((res) => (
+                          <div key={res._id} className="my-req-mini-card">
+                            <div className="my-req-mini-top">
+                              <span className={`my-req-mini-urgency ${res.urgency.toLowerCase()}`}>{res.urgency} Priority</span>
+                              <span className="my-req-mini-status">{res.status}</span>
+                            </div>
+                            <div className="my-req-mini-items">
+                              {res.items.map((item, idx) => (
+                                <div key={idx} className="my-req-mini-row">
+                                  <FiPackage size={12}/> {item.itemCategory}: <strong>{item.quantity}</strong>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+
+                        {(!req.requiredItems?.length && !req.linkedResources?.length) && (
+                          <div className="my-req-no-res">
+                            <p>No supplies requested yet.</p>
+                          </div>
+                        )}
+
+                      </div>
                     </div>
 
                     <div className="my-req-evidence">

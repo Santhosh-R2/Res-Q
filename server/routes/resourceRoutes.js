@@ -3,11 +3,21 @@ const router = express.Router();
 const { 
   createResourceRequest, 
   getMyResources,
-  getAllResources
+  getAllResources,
+  fulfillRequest,
+  getMyDonations,
+  updateResourceStatus,
+  getLogisticsTasks,
+  approveResourceRequest
 } = require("../controllers/resourceController");
 const { protect } = require("../middleware/authMiddleware");
 
 router.post("/", protect, createResourceRequest); 
 router.get("/my", protect, getMyResources);        
-router.get("/", protect, getAllResources);      
+router.get("/", protect, getAllResources);     
+router.put("/:id/fulfill", protect, fulfillRequest); 
+router.get("/donations", protect, getMyDonations);
+router.put("/:id/status", protect, updateResourceStatus);
+router.get("/logistics", protect, getLogisticsTasks);
+router.put("/:id/approve", protect, approveResourceRequest);
 module.exports = router;

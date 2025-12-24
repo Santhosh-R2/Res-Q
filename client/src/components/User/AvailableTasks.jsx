@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../api/baseUrl';
 import { toast } from 'react-toastify';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-import { FiMapPin, FiClock, FiCheckCircle, FiShield, FiAlertCircle } from "react-icons/fi";
+import { FiMapPin, FiClock, FiShield, FiAlertCircle, FiCheckCircle } from "react-icons/fi";
 
+// Leaflet Icon Fix
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 let DefaultIcon = L.icon({ iconUrl: icon, shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
@@ -49,61 +50,71 @@ function AvailableTasks() {
     }
   };
 
-  if (loading) return <div className="at-loader"><div className="spinner"></div></div>;
+  if (loading) return (
+    <div className="available-tasks-loader">
+      <div className="available-tasks-spinner"></div>
+    </div>
+  );
 
   return (
-    <div className="at-wrapper">
+    <div className="available-tasks-wrapper">
       
-      <header className="at-header">
+      <header className="available-tasks-header">
         <h1>Available Missions</h1>
         <p>Select a distress signal to respond immediately.</p>
-        <div className="at-count-badge">{tasks.length} Open Alerts</div>
+        <div className="available-tasks-count-badge">{tasks.length} Open Alerts</div>
       </header>
 
-      <div className="at-grid">
+      <div className="available-tasks-grid">
         {tasks.length === 0 ? (
-          <div className="at-empty">
+          <div className="available-tasks-empty">
             <FiCheckCircle />
             <h3>All Clear</h3>
             <p>No pending emergency signals in your sector.</p>
           </div>
         ) : (
           tasks.map((task) => (
-            <div key={task._id} className="at-card">
+            <div key={task._id} className="available-tasks-card">
               
-              <div className="at-map-preview">
+              <div className="available-tasks-map-preview">
                 <MapContainer 
                   center={[task.location.coordinates[1], task.location.coordinates[0]]} 
                   zoom={13} 
                   zoomControl={false}
                   scrollWheelZoom={false}
                   dragging={false} 
-                  className="static-map"
+                  className="available-tasks-static-map"
                 >
                   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                   <Marker position={[task.location.coordinates[1], task.location.coordinates[0]]} />
                 </MapContainer>
-                <div className="at-severity-tag">
+                <div className="available-tasks-severity-tag">
                   <FiAlertCircle /> {task.type}
                 </div>
               </div>
 
-              <div className="at-content">
-                <div className="at-top-row">
-                  <span className="at-time"><FiClock /> {new Date(task.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                  <span className="at-dist"><FiMapPin /> GPS Locked</span>
+              <div className="available-tasks-content">
+                <div className="available-tasks-top-row">
+                  <span className="available-tasks-time">
+                    <FiClock /> {new Date(task.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                  </span>
+                  <span className="available-tasks-dist">
+                    <FiMapPin /> GPS Locked
+                  </span>
                 </div>
 
                 <h4>{task.description || "Emergency Assistance Required"}</h4>
                 
-                <div className="at-meta">
+                <div className="available-tasks-meta">
                   <p>Requester: <strong>{task.userId?.fullName || "Anonymous"}</strong></p>
                   {task.linkedResources && task.linkedResources.length > 0 && (
-                    <span className="at-res-tag">Needs {task.linkedResources.length} Items</span>
+                    <span className="available-tasks-res-tag">
+                      Needs {task.linkedResources.length} Items
+                    </span>
                   )}
                 </div>
 
-                <button className="at-accept-btn" onClick={() => handleAccept(task._id)}>
+                <button className="available-tasks-accept-btn" onClick={() => handleAccept(task._id)}>
                   <FiShield /> Accept Mission
                 </button>
               </div>

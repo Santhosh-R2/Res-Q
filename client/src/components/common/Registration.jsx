@@ -1,177 +1,177 @@
 import React, { useState, useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { Link, useNavigate } from 'react-router-dom';
-import axiosInstance from '../api/baseUrl'; // Your Axios Instance
+import axiosInstance from '../api/baseUrl';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import { FiMapPin, FiCheck, FiUser, FiMail, FiPhone, FiLock, FiGlobe } from "react-icons/fi";
+import { BiRadar } from "react-icons/bi";
 
-import communityImg from '../../assets/AboutImg/volunters.jpg';
-import '../styles/Registration.css';
+import '../styles/Registration.css'; 
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+let DefaultIcon = L.icon({ iconUrl: icon, shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
+L.Marker.prototype.options.icon = DefaultIcon;
+
+function LocationMarker({ position, setPosition }) {
+  useMapEvents({
+    click(e) { setPosition(e.latlng); },
+  });
+  return position ? <Marker position={position} /> : null;
+}
 
 function Registration() {
-  const comp = useRef(null);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [formData, setFormData] = useState({ fullName: '', email: '', phone: '', password: '', confirmPassword: '', role: 'victim' });
+  const [location, setLocation] = useState(null);
 
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    role: 'victim' 
-  });
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const selectRole = (role) => setFormData({ ...formData, role: role });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          toast.success("GPS Locked");
+        },
+        () => toast.error("GPS Failed. Use Map.")
+      );
+    }
   };
-
-  const selectRole = (role) => {
-    setFormData({ ...formData, role: role });
-  };
-
-  useLayoutEffect(() => {
-    let ctx = gsap.context(() => {
-      gsap.fromTo(".reg-img-section", { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 1.2, ease: "power4.out" });
-      gsap.fromTo(".reg-form-wrapper", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1, delay: 0.2, ease: "power3.out" });
-      gsap.fromTo(".animate-field", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, delay: 0.4 });
-    }, comp);
-    return () => ctx.revert();
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-        if(formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match!");
-      return;
-    }
-    if(formData.password.length < 6) {
-      toast.warn("Password must be at least 6 characters.");
-      return;
-    }
-
+    if(formData.password !== formData.confirmPassword) return toast.error("Passwords mismatch");
+    
     setIsLoading(true);
-
     try {
-     
       const { confirmPassword, ...submitData } = formData;
+      const payload = { ...submitData, location }; 
+      const response = await axiosInstance.post("auth/register", payload);
       
-      const response = await axiosInstance.post("auth/register", submitData);
-      if(response.status === 201 || response.status === 200) {
-        toast.success("Registration Successful! Redirecting...");
-                if(response.data.token) {
-           localStorage.setItem('token', response.data.token);
-           localStorage.setItem('userInfo', JSON.stringify(response.data));
-        }
-
-        setTimeout(() => navigate('/dashboard'), 2000);
+      if(response.status === 201) {
+        toast.success("Welcome Aboard!");
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userInfo', JSON.stringify(response.data));
+        setTimeout(() => navigate('/login'), 1500);
       }
     } catch (error) {
-      console.error("Register Error:", error);
-      const msg = error.response?.data?.message || "Registration Failed. Try again.";
-      toast.error(msg);
+      toast.error(error.response?.data?.message || "Failed.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="reg-page-container" ref={comp}>
-      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+    <div className="reg-pro-wrapper">
+      <ToastContainer position="top-right" theme="colored" />
+      <div className="mesh-gradient"></div>
 
-      <div className="reg-img-section">
-        <div className="reg-overlay"></div>
-        <img src={communityImg} alt="Community" className="reg-bg-img" />
-        
-        <div className="reg-text-content">
-          <h1>Join the Network.</h1>
-          <p>Whether you need help, want to volunteer, or donate supplies — your participation strengthens the ecosystem.</p>
-          <div className="reg-stat-row">
-            <div><h3>10k+</h3><span>Volunteers</span></div>
-            <div><h3>500+</h3><span>Active Missions</span></div>
+      <div className="reg-pro-card">
+                <div className="reg-pro-sidebar">
+          <div className="brand-logo">
+            <BiRadar className="logo-icon" /> ResQ-Link
+          </div>
+          <h1>Join the Global <br/>Response Network.</h1>
+          <p>Connecting victims, volunteers, and donors in real-time crisis management.</p>
+          
+          <div className="stats-mini">
+            <div className="stat"><span>10k+</span> Volunteers</div>
+            <div className="stat"><span>500+</span> Missions</div>
           </div>
         </div>
-      </div>
 
-      <div className="reg-form-section">
-        <div className="reg-form-wrapper">
-          
-          <div className="reg-header animate-field">
+        {/* RIGHT SIDE: FORM */}
+        <div className="reg-pro-form-container">
+          <div className="form-header">
             <h2>Create Account</h2>
-            <p>Join ResQ-Link to make a difference.</p>
+            <span>Already a member? <Link to="/login">Sign In</Link></span>
           </div>
 
-          <form className="reg-form" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             
-            <label className="field-label animate-field">I am joining as a:</label>
-            <div className="role-grid animate-field">
-              {['victim', 'volunteer', 'donor'].map((role) => (
+            <label className="section-label">I am joining as:</label>
+            <div className="role-pills">
+              {['victim', 'volunteer', 'donor'].map((r) => (
                 <div 
-                  key={role}
-                  className={`role-card ${formData.role === role ? 'active' : ''}`}
-                  onClick={() => selectRole(role)}
+                  key={r} 
+                  className={`role-pill ${formData.role === r ? 'active' : ''}`}
+                  onClick={() => selectRole(r)}
                 >
-                  <span className="role-icon">
-                    {role === 'victim' ? '🆘' : role === 'volunteer' ? '⛑️' : '📦'}
-                  </span>
-                  <span>{role === 'victim' ? 'General User' : role.charAt(0).toUpperCase() + role.slice(1)}</span>
+                  {r.charAt(0).toUpperCase() + r.slice(1)}
                 </div>
               ))}
             </div>
 
-            <div className="input-row animate-field">
-              <div className="reg-input-group">
-                <label>Full Name</label>
-                <input 
-                  type="text" name="fullName" placeholder="John Doe" 
-                  value={formData.fullName} onChange={handleChange} required 
-                />
+            <div className="input-grid">
+              <div className="input-box">
+                <FiUser className="icon" />
+                <input type="text" name="fullName" placeholder="Full Name" onChange={handleChange} required />
               </div>
-              <div className="reg-input-group">
-                <label>Phone</label>
-                <input 
-                  type="tel" name="phone" placeholder="+91..." 
-                  value={formData.phone} onChange={handleChange} required 
-                />
+              <div className="input-box">
+                <FiPhone className="icon" />
+                <input type="tel" name="phone" placeholder="Phone Number" onChange={handleChange} required />
               </div>
             </div>
 
-            <div className="reg-input-group animate-field">
-              <label>Email Address</label>
-              <input 
-                type="email" name="email" placeholder="john@example.com" 
-                value={formData.email} onChange={handleChange} required 
-              />
+            <div className="input-box full">
+              <FiMail className="icon" />
+              <input type="email" name="email" placeholder="Email Address" onChange={handleChange} required />
             </div>
 
-            <div className="input-row animate-field">
-              <div className="reg-input-group">
-                <label>Password</label>
-                <input 
-                  type="password" name="password" placeholder="••••••" 
-                  value={formData.password} onChange={handleChange} required 
-                />
+            <div className="location-card-pro">
+              <div className="loc-info">
+                <span className="loc-title">Location </span>
+                {location ? <span className="loc-status ok"><FiCheck/> Locked</span> : <span className="loc-status">Not Set</span>}
               </div>
-              <div className="reg-input-group">
-                <label>Confirm</label>
-                <input 
-                  type="password" name="confirmPassword" placeholder="••••••" 
-                  value={formData.confirmPassword} onChange={handleChange} required 
-                />
+              <div className="loc-actions">
+                <button type="button" onClick={getCurrentLocation}><FiMapPin/> GPS</button>
+                <button type="button" onClick={() => setShowMap(true)}><FiGlobe/> Map</button>
               </div>
             </div>
 
-            <button type="submit" className="reg-btn animate-field" disabled={isLoading}>
-              {isLoading ? "Creating Account..." : "Register Now"}
+            <div className="input-grid">
+              <div className="input-box">
+                <FiLock className="icon" />
+                <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+              </div>
+              <div className="input-box">
+                <FiLock className="icon" />
+                <input type="password" name="confirmPassword" placeholder="Confirm" onChange={handleChange} required />
+              </div>
+            </div>
+
+            <button type="submit" className="submit-btn-pro" disabled={isLoading}>
+              {isLoading ? "Processing..." : "Create Account"}
             </button>
           </form>
 
-          <div className="reg-footer animate-field">
-            <p>Already have an account? <Link to="/login">Login here</Link></p>
-          </div>
-
         </div>
       </div>
+
+      {showMap && (
+        <div className="map-overlay-pro">
+          <div className="map-box-pro">
+            <h3>Pin Your Location</h3>
+            <div className="map-frame">
+              <MapContainer center={[20.5937, 78.9629]} zoom={5} style={{ height: "100%", width: "100%" }}>
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <LocationMarker position={location} setPosition={setLocation} />
+              </MapContainer>
+            </div>
+            <div className="map-actions">
+              <button onClick={() => setShowMap(false)} className="cancel">Cancel</button>
+              <button onClick={() => setShowMap(false)} className="confirm">Confirm Location</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

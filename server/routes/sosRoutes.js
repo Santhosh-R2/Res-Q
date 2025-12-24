@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createSOS, getAllSOS ,getMyRequests ,updateSOSStatus,getVolunteerHistory,assignTask,getVolunteers,acceptTask} = require("../controllers/sosController");
+const { createSOS, getAllSOS ,getMyRequests ,updateSOSStatus,getVolunteerHistory,assignTask,getVolunteers,acceptTask,getAllSOSAnalytics} = require("../controllers/sosController");
 const { protect } = require("../middleware/authMiddleware");
 
 router.post("/", protect, createSOS);
@@ -11,4 +11,6 @@ router.get("/history", protect, getVolunteerHistory);
 router.put("/assign", protect, assignTask); 
 router.get("/volunteers-list", protect, getVolunteers);
 router.put("/:id/accept", protect, acceptTask);
+router.get("/analytics", protect, getAllSOSAnalytics); // Add this BEFORE /:id
+
 module.exports = router;

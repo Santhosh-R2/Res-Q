@@ -58,6 +58,18 @@ const getAllSOS = async (req, res) => {
      res.status(500).json({ message: error.message });
    }
 };
+const getAllSOSAnalytics = async (req, res) => {
+  try {
+    // No filter = returns pending, accepted, resolved, cancelled
+    const allAlerts = await SOSRequest.find({})
+      .select('type status createdAt location') // Select only needed fields for speed
+      .sort({ createdAt: -1 });
+
+    res.json(allAlerts);
+  } catch (error) {
+    res.status(500).json({ message: "Analytics Error" });
+  }
+};
 const getMyRequests = async (req, res) => {
   try {
     const requests = await SOSRequest.find({ userId: req.user._id })
@@ -149,4 +161,4 @@ const acceptTask = async (req, res) => {
     res.status(500).json({ message: "Failed to accept task" });
   }
 };
-module.exports = { createSOS, getAllSOS ,getMyRequests,updateSOSStatus,getVolunteerHistory,assignTask,getVolunteers ,acceptTask};
+module.exports = { createSOS, getAllSOS ,getMyRequests,updateSOSStatus,getVolunteerHistory,assignTask,getVolunteers ,acceptTask,getAllSOSAnalytics};

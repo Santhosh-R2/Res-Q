@@ -13,21 +13,33 @@ const generateToken = (id) => {
 
 const registerUser = async (req, res) => {
   try {
-    const { fullName, email, phone, password, role } = req.body;
+    const { fullName, email, phone, password, role, location } = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: "User already exists" });
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+    const userRole = role ? role.toLowerCase() : "victim";
 
-    const user = await User.create({
+    // Create User object with Location
+    const userPayload = {
       fullName,
       email,
       phone,
       password: hashedPassword,
-      role: role ? role.toLowerCase() : "victim", 
-    });
+      role: userRole,
+    };
+
+    // If location provided (lat/lng), save it as GeoJSON
+    if (location && location.lat && location.lng) {
+      userPayload.location = {
+        type: "Point",
+        coordinates: [location.lng, location.lat] // MongoDB is [Lng, Lat]
+      };
+    }
+
+    const user = await User.create(userPayload);
 
     if (user) {
       res.status(201).json({
@@ -140,4 +152,36 @@ const updateUserProfile = async (req, res) => {
     res.status(404).json({ message: "User not found" });
   }
 };
-module.exports = { registerUser, loginUser, loginAdmin, updateUserProfile };
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}).select('-password').sort({ createdAt: -1 });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+}
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    await user.deleteOne();
+    res.json({ message: "User removed" });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const updateUserRoleAdmin = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.role = req.body.role || user.role;
+    await user.save();
+
+    res.json({ message: "Role updated", user });
+  } catch (error) {
+    res.status(500).json({ message: "Update failed" });
+  }
+};
+module.exports = { registerUser, loginUser, loginAdmin, updateUserProfile, getAllUsers, deleteUser,updateUserRoleAdmin };

@@ -18,6 +18,11 @@ import History from './components/User/History'
 import AvailableTasks from './components/Admin/AvailableTasks'
 import AdminDashBoard from './components/Admin/AdminDashBoard'
 import UserAvailableTaks from './components/User/AvailableTasks'
+import DonateItems from './components/User/DonateItems'
+import TrackDonation from './components/User/TrackDonation'
+import DeliveryLogistics from './components/User/DeliveryLogistics'
+import UserDatabase from './components/Admin/UserDatabase'
+import GlobalInventory from './components/Admin/GlobalInventory'
 
 function App() {
   return (
@@ -39,7 +44,13 @@ function App() {
           <Route path="/history" element={<History />} />
           <Route path="/available-tasks" element={<AvailableTasks />} />
           <Route path="/admin-dashboard" element={<AdminDashBoard />} />
-<Route path="/missions" element={<UserAvailableTaks />} />
+          <Route path="/missions" element={<UserAvailableTaks />} />
+          <Route path="/donate" element={<DonateItems />} />
+          <Route path="/track-donations" element={<TrackDonation />} />
+          <Route path="/logistics" element={<DeliveryLogistics />} />
+          <Route path="/manage-users" element={<UserDatabase />} />
+          <Route path="/inventory" element={<GlobalInventory />} />
+
         </Route>
       </Routes>
     </Router>

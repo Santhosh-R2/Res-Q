@@ -6,11 +6,18 @@ import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-backend-webgl';
 import '@tensorflow/tfjs-backend-cpu';
 import * as mobilenet from '@tensorflow-models/mobilenet';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 
 import { 
-  FiMapPin, FiCamera, FiUpload, FiX, FiCheckCircle, FiInfo, FiRefreshCw, FiRepeat, FiCpu, FiPlus, FiTrash2, FiActivity, FiShield
+  FiMapPin, FiCamera, FiUpload, FiX, FiCheckCircle, FiInfo, FiRefreshCw, FiRepeat, FiCpu, FiPlus, FiTrash2, FiActivity, FiGlobe
 } from "react-icons/fi";
 import { BiError, BiScan, BiRadar } from "react-icons/bi";
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+let DefaultIcon = L.icon({ iconUrl: icon, shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
+L.Marker.prototype.options.icon = DefaultIcon;
 
 import '../styles/SOSPage.css';
 import axiosInstance from '../api/baseUrl';
@@ -23,6 +30,18 @@ const DISASTER_KNOWLEDGE = {
   'Violence': ['Trauma Kit', 'Safe Shelter', 'Police Assistance'],
   'Other': ['General Aid', 'Water', 'Food']
 };
+
+function LocationMarker({ position, setPosition }) {
+  useMapEvents({
+    click(e) {
+      setPosition(e.latlng);
+    },
+  });
+
+  return position === null ? null : (
+    <Marker position={position}></Marker>
+  );
+}
 
 function SOSPage() {
   const [step, setStep] = useState(1);
@@ -40,6 +59,9 @@ function SOSPage() {
   const [aiPrediction, setAiPrediction] = useState("");
   const [requestedItems, setRequestedItems] = useState([]);
   const [newItemName, setNewItemName] = useState("");
+
+  const [showMapSelector, setShowMapSelector] = useState(false);
+  const [manualCoords, setManualCoords] = useState(null);
 
   const webcamRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -79,11 +101,9 @@ function SOSPage() {
     if (!net) return;
     setIsAnalyzing(true);
     setEmergencyType('');
-
     const imgEl = new Image();
     imgEl.src = imageSrc;
     imgEl.crossOrigin = "anonymous";
-
     imgEl.onload = async () => {
       try {
         const predictions = await net.classify(imgEl);
@@ -91,11 +111,8 @@ function SOSPage() {
         setEmergencyType(detectedType);
         updateSuggestedItems(detectedType);
         toast.info(`AI Detected: ${detectedType}`);
-      } catch (error) {
-        console.error("AI Analysis Failed", error);
-      } finally {
-        setIsAnalyzing(false);
-      }
+      } catch (error) { console.error("AI Error", error); } 
+      finally { setIsAnalyzing(false); }
     };
   };
 
@@ -119,34 +136,36 @@ function SOSPage() {
 
     if (!("geolocation" in navigator)) {
       setIsLocating(false);
-      setLocationError("GPS Not Supported");
       return;
     }
 
-    const success = (position) => {
-      const { latitude, longitude, accuracy } = position.coords;
-      setLocation({ lat: latitude, lng: longitude, accuracy });
-      fetchAddress(latitude, longitude);
-      setIsLocating(false);
-      toast.success(`GPS Locked (${Math.round(accuracy)}m accuracy)`);
-    };
-
-    const error = (err) => {
-      console.warn("High Accuracy Failed, switching to Standard Mode...");
-      // Fallback to low accuracy
-      navigator.geolocation.getCurrentPosition(success, (finalErr) => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude, accuracy } = pos.coords;
+        setLocation({ lat: latitude, lng: longitude, accuracy });
+        fetchAddress(latitude, longitude);
         setIsLocating(false);
-        setLocationError("Signal Lost");
-        toast.error("GPS Failed. Please enter manually.");
-      }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 0 });
-    };
-
-    navigator.geolocation.getCurrentPosition(success, error, { 
-      enableHighAccuracy: true, timeout: 5000, maximumAge: 0 
-    });
+        toast.success(`GPS Locked`);
+      },
+      (err) => {
+        setIsLocating(false);
+        setLocationError("GPS Failed");
+        toast.warn("GPS Signal Weak. Try Manual Selection.");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   };
 
   useEffect(() => { getLocation(); }, []);
+
+  const confirmManualLocation = () => {
+    if(manualCoords) {
+      setLocation({ lat: manualCoords.lat, lng: manualCoords.lng, accuracy: 10 });
+      fetchAddress(manualCoords.lat, manualCoords.lng);
+      setShowMapSelector(false);
+      toast.success("Location Manually Set");
+    }
+  };
 
   const capturePhoto = useCallback(() => {
     if (webcamRef.current) {
@@ -260,9 +279,15 @@ function SOSPage() {
              <div className="readout-address">
                 <FiMapPin /> {address}
              </div>
-             {!location && !isLocating && (
-               <button className="retry-btn" onClick={getLocation}><FiRefreshCw /> Retry Link</button>
-             )}
+             
+             <div className="location-actions">
+                {!location && !isLocating && (
+                  <button className="retry-btn" onClick={getLocation}><FiRefreshCw /> Retry GPS</button>
+                )}
+                <button className="manual-map-btn" onClick={() => setShowMapSelector(true)}>
+                  <FiGlobe /> Select on Map
+                </button>
+             </div>
           </div>
         </div>
       )}
@@ -287,7 +312,7 @@ function SOSPage() {
 
               {image ? (
                 <div className="image-preview-wrapper">
-                  <img src={image} alt="Evidence" />
+                  <img src={image} alt="Evidence" id="evidence-img" />
                   <div className="preview-overlay">
                     <button className="retake-btn" onClick={() => { setImage(null); setRequestedItems([]); setEmergencyType(''); }}>
                       <FiRefreshCw /> RETAKE
@@ -383,6 +408,32 @@ function SOSPage() {
           <button className="return-btn" onClick={() => window.location.href='/dashboard'}>OPEN TRACKER</button>
         </div>
       )}
+
+      {showMapSelector && (
+        <div className="map-modal-overlay">
+          <div className="map-modal-content">
+            <h3>Select Precise Location</h3>
+            <p>Tap on the map to place the pin.</p>
+            <div className="map-wrapper-box">
+              <MapContainer 
+                center={[20.5937, 78.9629]} 
+                zoom={5} 
+                className="selector-map"
+              >
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <LocationMarker position={manualCoords} setPosition={setManualCoords} />
+              </MapContainer>
+            </div>
+            <div className="map-modal-actions">
+              <button className="cancel-map-btn" onClick={() => setShowMapSelector(false)}>Cancel</button>
+              <button className="confirm-map-btn" onClick={confirmManualLocation} disabled={!manualCoords}>
+                Confirm Location
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
