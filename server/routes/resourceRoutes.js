@@ -8,7 +8,8 @@ const {
   getMyDonations,
   updateResourceStatus,
   getLogisticsTasks,
-  approveResourceRequest
+  approveResourceRequest,
+  rejectResourceRequest
 } = require("../controllers/resourceController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -20,4 +21,5 @@ router.get("/donations", protect, getMyDonations);
 router.put("/:id/status", protect, updateResourceStatus);
 router.get("/logistics", protect, getLogisticsTasks);
 router.put("/:id/approve", protect, approveResourceRequest);
+router.put('/:id/reject', protect, rejectResourceRequest);
 module.exports = router;

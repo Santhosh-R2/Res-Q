@@ -6,10 +6,11 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 import { 
-  FiTarget, FiMapPin, FiCheckSquare, FiClock, FiActivity, FiUserCheck, FiPackage, FiAlertTriangle, FiPhone
+  FiTarget, FiMapPin, FiCheckSquare, FiClock, FiActivity, FiUserCheck, FiPackage, FiAlertTriangle, FiPhone, FiBox
 } from "react-icons/fi";
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
 let DefaultIcon = L.icon({ iconUrl: icon, shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
 L.Marker.prototype.options.icon = DefaultIcon;
 
@@ -89,8 +90,12 @@ function MissionController() {
           <p>Tactical response interface for active incidents.</p>
         </div>
         <div className="mission-controll-stats">
-          <div className="mission-controll-stat-pill mission-controll-red"><FiAlertTriangle /> {missions.filter(m => m.status === 'pending').length} Pending</div>
-          <div className="mission-controll-stat-pill mission-controll-blue"><FiActivity /> {missions.filter(m => m.status === 'accepted').length} Active</div>
+          <div className="mission-controll-stat-pill mission-controll-red">
+            <FiAlertTriangle /> {missions.filter(m => m.status === 'pending').length} Pending
+          </div>
+          <div className="mission-controll-stat-pill mission-controll-blue">
+            <FiActivity /> {missions.filter(m => m.status === 'accepted').length} Active
+          </div>
         </div>
       </header>
 
@@ -112,20 +117,21 @@ function MissionController() {
                   onClick={() => setSelectedMission(mission)}
                 >
                   <div className="mission-controll-card-top">
-                    <span className={`mission-controll-type-badge mission-controll-${mission.type.toLowerCase()}`}>{mission.type}</span>
+                    <span className={`mission-controll-type-badge mission-controll-${mission.type?.toLowerCase() || 'other'}`}>{mission.type}</span>
                     <span className={`mission-controll-status-dot mission-controll-${mission.status}`}></span>
                   </div>
                   <h4>{mission.description ? mission.description.substring(0, 40) + "..." : "Emergency Request"}</h4>
                   
-                  {mission.linkedResources && mission.linkedResources.length > 0 && (
+                  {/* FIXED: Using requiredItems.length to show correct count (3 in your case) */}
+                  {mission.requiredItems && mission.requiredItems.length > 0 && (
                     <div className="mission-controll-resource-badge">
-                      <FiPackage /> {mission.linkedResources.length} Items Requested
+                      <FiPackage /> {mission.requiredItems.length} Items Requested
                     </div>
                   )}
 
                   <div className="mission-controll-card-meta">
                     <span><FiClock /> {new Date(mission.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                    <span><FiMapPin /> {Math.round(mission.location.accuracy || 50)}m Acc</span>
+                    <span><FiMapPin /> {Math.round(mission.location?.accuracy || 0)}m Acc</span>
                   </div>
                 </div>
               ))
@@ -191,25 +197,42 @@ function MissionController() {
                   </div>
 
                   <div className="mission-controll-info-group">
-                    <label>Requested Supplies</label>
+                    <label>Supplies Tracking</label>
+                    
+                    {/* CASE 1: Linked Resources (Donations already on the way) */}
                     {selectedMission.linkedResources && selectedMission.linkedResources.length > 0 ? (
                       <div className="mission-controll-supplies-list">
+                        <span className="info-sub-label">Active Donations:</span>
                         {selectedMission.linkedResources.map((res, idx) => (
                           <div key={idx} className="mission-controll-supply-item">
                             <div className="mission-controll-supply-left">
-                              <span className={`mission-controll-supply-urgency mission-controll-${res.urgency.toLowerCase()}`}>{res.urgency}</span>
+                              <span className={`mission-controll-supply-urgency mission-controll-${res.urgency?.toLowerCase() || 'medium'}`}>{res.urgency}</span>
                               <div className="mission-controll-supply-details">
                                 {res.items.map((item, i) => (
-                                  <span key={i}><strong>{item.quantity}</strong> {item.itemCategory}</span>
+                                  <span key={i}><strong>  {item.quantity} </strong>  {item.itemCategory}</span>
                                 ))}
                               </div>
                             </div>
-                            <span className="mission-controll-supply-status">{res.status}</span>
+                            {/* <span className="mission-controll-supply-status">{res.status}</span> */}
                           </div>
                         ))}
                       </div>
+                    ) : null}
+
+                    {/* CASE 2: Required Items (The initial items requested by victim) */}
+                    {selectedMission.requiredItems && selectedMission.requiredItems.length > 0 ? (
+                      <div className="mission-controll-requirement-box" style={{marginTop: '10px'}}>
+                        <span className="info-sub-label">Initial Request Items:</span>
+                        <div className="mission-controll-tag-container">
+                          {selectedMission.requiredItems.map((item, idx) => (
+                            <span key={idx} className="mission-controll-req-tag">
+                              <FiBox /> {item.item}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     ) : (
-                      <p className="mission-controll-no-supplies-text">No supplies requested for this mission.</p>
+                       !selectedMission.linkedResources?.length && <p className="mission-controll-no-supplies-text">No items requested.</p>
                     )}
                   </div>
 
@@ -218,7 +241,7 @@ function MissionController() {
                     {selectedMission.image ? (
                       <img src={selectedMission.image} alt="Evidence" className="mission-controll-evidence-img" />
                     ) : (
-                      <div className="mission-controll-no-img">No Image Data</div>
+                      <div className="mission-controll-no-img">No Image Data Available</div>
                     )}
                   </div>
                 </div>
@@ -227,7 +250,9 @@ function MissionController() {
             </>
           ) : (
             <div className="mission-controll-placeholder">
-              <FiTarget /><h3>Select a Mission</h3><p>Choose an incident from the left panel.</p>
+              <FiTarget />
+              <h3>Select a Mission</h3>
+              <p>Choose an incident from the left panel to begin coordination.</p>
             </div>
           )}
         </main>

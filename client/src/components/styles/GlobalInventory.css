@@ -281,7 +281,140 @@
   animation: spin 1s linear infinite; margin: 0 auto 15px;
 }
 @keyframes spin { 100% { transform: rotate(360deg); } }
+/* Container: Creates a single, unified pill-shaped unit */
+.qty-stepper-large {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 220px;
+  margin-top: 5px;
+  transition: border-color 0.2s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
 
+.qty-stepper-large:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Stepper Buttons */
+.qty-stepper-large button {
+  width: 50px;
+  height: 48px;
+  border: none;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 1.4rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.qty-stepper-large button:first-child {
+  border-right: 1.5px solid #e2e8f0;
+}
+
+.qty-stepper-large button:last-child {
+  border-left: 1.5px solid #e2e8f0;
+}
+
+.qty-stepper-large button:hover {
+  background: #f1f5f9;
+  color: #2563eb;
+}
+
+.qty-stepper-large button:active {
+  background: #e2e8f0;
+  transform: scale(0.96);
+}
+
+/* Input Field */
+.qty-stepper-large input {
+  flex: 1;
+  width: 60px;
+  height: 48px;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Removes default up/down arrows (spinners) in Chrome, Safari, Edge, Opera */
+.qty-stepper-large input::-webkit-outer-spin-button,
+.qty-stepper-large input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Removes arrows in Firefox */
+.qty-stepper-large input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Disabled styling for buttons (optional, but good for UI) */
+.qty-stepper-large button:disabled {
+  background: #f8fafc;
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+/* Container for footer buttons */
+.Global-inv-req-footer {
+  display: flex;
+  gap: 12px;
+  padding: 15px;
+  border-top: 1px solid #f1f5f9;
+  background: var(--sidemenu-bg-main);
+}
+
+/* Red Reject Button */
+.Global-inv-btn-reject {
+  flex: 1;
+  background: white;
+  color: #ef4444;
+  border: 1.5px solid #fee2e2;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.glob-name{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.Global-inv-btn-reject:hover {
+  background: #fef2f2;
+  border-color: #ef4444;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
+}
+
+.Global-inv-btn-reject:active {
+  transform: scale(0.96);
+}
+
+/* Ensure Authorize button also takes half width */
+.Global-inv-btn-approve {
+  flex: 1;
+  /* ... existing styles ... */
+}
 /* RESPONSIVE */
 @media (max-width: 900px) {
   .Global-inv-stats-panel { grid-template-columns: 1fr; }

@@ -577,8 +577,85 @@
 }
 .confirm-map-btn:disabled { background: var(--sidemenu-border-color); cursor: not-allowed; }
 
-/* RESPONSIVE */
-@media (max-width: 500px) {
+/* Container for relative positioning */
+.add-custom-item-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 15px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05)); /* Subtle depth */
+}
+
+/* Professional Input Styling */
+.add-custom-item-container input {
+  width: 100%;
+  padding: 14px 55px 14px 18px; /* Extra right padding for the button */
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--sidemenu-text-main);
+  background: var(--sidemenu-bg-main); /* Match your dashboard background */
+  border: 1.5px solid var(--sidemenu-border-color);
+  border-radius: 12px; /* Smooth rounded corners */
+  outline: none;
+  transition: all 0.2s ease-in-out;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Interaction: Focus state */
+.add-custom-item-container input:focus {
+  border-color: #ef4444; /* Emergency red accent */
+  background: var(--sidemenu-bg-main); /* Slight brighten on focus */
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1); /* Soft glow */
+}
+
+/* Placeholder color */
+.add-custom-item-container input::placeholder {
+  color: var(--sidemenu-text-muted);
+  opacity: 0.7;
+}
+
+/* High-End Inner Button */
+.inner-add-btn {
+  position: absolute;
+  right: 6px; /* Inset from the edge */
+  top: 6px;
+  bottom: 6px;
+  width: 42px; /* Square-ish button */
+  
+  /* Gradient for a "pro" look */
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  
+  border: none;
+  border-radius: 8px; /* Slightly smaller radius than input for better nesting aesthetics */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  
+  transition: transform 0.1s active, background 0.2s ease;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+}
+
+/* Button Hover/Active states */
+.inner-add-btn:hover {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
+}
+
+.inner-add-btn:active {
+  transform: scale(0.95);
+  background: #b91c1c;
+}
+
+/* Tooltip behavior or accessibility */
+.inner-add-btn:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}@media (max-width: 500px) {
   .sos-header-pro h1 { font-size: 1.6rem; }
   .type-grid { grid-template-columns: repeat(2, 1fr); }
   .sos-activate-btn { width: 180px; height: 180px; }

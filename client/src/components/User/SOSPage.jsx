@@ -360,29 +360,35 @@ function SOSPage() {
               ))}
             </div>
 
-            <div className="resource-box">
-              <div className="ai-header">
-                <FiCpu /> <span>INTELLIGENT SUPPLY ALLOCATION</span>
-              </div>
-              <div className="ai-tags">
-                {requestedItems.length === 0 ? <span className="empty-tag">Pending Analysis...</span> :
-                  requestedItems.map((obj, idx) => (
-                    <span key={idx} className="ai-tag">
-                      {obj.item} <FiX className="del-tag" onClick={() => removeItem(idx)} />
-                    </span>
-                  ))
-                }
-              </div>
-              <div className="add-custom-item">
-                <input 
-                  type="text" 
-                  placeholder="Request additional item..." 
-                  value={newItemName}
-                  onChange={(e) => setNewItemName(e.target.value)}
-                />
-                <button onClick={addCustomItem}><FiPlus /></button>
-              </div>
-            </div>
+          <div className="resource-box">
+  <div className="ai-header">
+    <FiCpu /> <span>INTELLIGENT SUPPLY ALLOCATION</span>
+  </div>
+  <div className="ai-tags">
+    {requestedItems.length === 0 ? (
+      <span className="empty-tag">Pending Analysis...</span>
+    ) : (
+      requestedItems.map((obj, idx) => (
+        <span key={idx} className="ai-tag">
+          {obj.item} <FiX className="del-tag" onClick={() => removeItem(idx)} />
+        </span>
+      ))
+    )}
+  </div>
+  
+  {/* UPDATED INPUT SECTION */}
+  <form className="add-custom-item-container" onSubmit={addCustomItem}>
+    <input 
+      type="text" 
+      placeholder="Request additional item..." 
+      value={newItemName}
+      onChange={(e) => setNewItemName(e.target.value)}
+    />
+    <button type="submit" className="inner-add-btn" title="Add Item">
+      <FiPlus />
+    </button>
+  </form>
+</div>
 
             <label className="section-label">ADDITIONAL INTEL</label>
             <textarea className="details-input" placeholder="Casualties, trapped persons, access routes..." value={description} onChange={(e) => setDescription(e.target.value)} rows="2"></textarea>

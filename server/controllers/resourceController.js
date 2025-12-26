@@ -196,6 +196,28 @@ const approveResourceRequest = async (req, res) => {
     res.status(500).json({ message: "Server Error during approval" });
   }
 };
+
+const rejectResourceRequest = async (req, res) => {
+  try {
+    const request = await ResourceRequest.findById(req.params.id);
+    
+    if (!request) return res.status(404).json({ message: "Request not found" });
+    
+    // Check if it's already processed
+    if (request.status !== 'pending') {
+      return res.status(400).json({ message: `Cannot reject. Current status: ${request.status}` });
+    }
+
+    // Update status to rejected
+    request.status = 'rejected';
+    await request.save();
+
+    res.json({ message: "Request rejected successfully", request });
+  } catch (error) {
+    console.error("Rejection Error:", error);
+    res.status(500).json({ message: "Server Error during rejection" });
+  }
+};
 module.exports = { 
   createResourceRequest, 
   getMyResources, 
@@ -204,5 +226,6 @@ module.exports = {
   getMyDonations,
   updateResourceStatus,
   getLogisticsTasks,
-  approveResourceRequest  // <--- Ensure this is here!
+  approveResourceRequest,
+  rejectResourceRequest
 };

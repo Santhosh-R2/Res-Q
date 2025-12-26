@@ -181,6 +181,8 @@
   background: var(--sidemenu-bg-main);
   padding: 4px 10px;
   border-radius: 8px;
+  position: relative;
+  bottom: 80px;
 }
 
 .dash-dot { width: 10px; height: 10px; border-radius: 50%; }

@@ -224,7 +224,24 @@
 .User-database-contact-cell small {
   color: var(--sidemenu-text-muted);
 }
-
+.User-database-location-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--sidemenu-bg-main);
+  color: #3b82f6;
+  padding: 6px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  transition: 0.2s;
+  border: 1px solid #dbeafe;
+}
+.User-database-location-btn:hover {
+  background: #3b82f6;
+  color: white;
+}
 .User-database-role-edit-select {
   padding: 6px 10px;
   border-radius: 6px;

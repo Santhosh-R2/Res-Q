@@ -23,6 +23,7 @@ import TrackDonation from './components/User/TrackDonation'
 import DeliveryLogistics from './components/User/DeliveryLogistics'
 import UserDatabase from './components/Admin/UserDatabase'
 import GlobalInventory from './components/Admin/GlobalInventory'
+import ForgotPassword from './components/User/ForgotPassword'
 
 function App() {
   return (
@@ -33,6 +34,8 @@ function App() {
         <Route path='/contact' element={[<ResQLinkNavBar />, <ContactUs />]} />
         <Route path='/login' element={[<ResQLinkNavBar />, <Login />]} />
         <Route path='/register' element={[<ResQLinkNavBar />, <Registration />]} />
+          <Route path="/forgotPassword" element={[<ResQLinkNavBar />,<ForgotPassword />]}/>
+
         <Route element={<UserLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/sos" element={<SOSPage />} />
@@ -50,7 +53,6 @@ function App() {
           <Route path="/logistics" element={<DeliveryLogistics />} />
           <Route path="/manage-users" element={<UserDatabase />} />
           <Route path="/inventory" element={<GlobalInventory />} />
-
         </Route>
       </Routes>
     </Router>
