@@ -1,4 +1,3 @@
-// models/User.js
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema(
@@ -16,7 +15,6 @@ const UserSchema = new mongoose.Schema(
       type: { type: String, default: "Point" },
       coordinates: { type: [Number], default: [0, 0] }, 
     },
-    // ADD THESE TWO FIELDS FOR FORGOT PASSWORD
     resetPasswordToken: String,
     resetPasswordExpires: Date,
   },

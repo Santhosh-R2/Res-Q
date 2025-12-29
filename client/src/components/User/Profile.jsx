@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../api/baseUrl';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { 
-  FiUser, FiMail, FiPhone, FiSave, FiShield, FiCheckCircle, FiRefreshCw, FiEdit3 
+  FiUser, FiMail, FiPhone, FiSave, FiShield, FiCheckCircle, FiRefreshCw 
 } from "react-icons/fi";
 
 import '../styles/Profile.css';
@@ -41,7 +41,19 @@ function Profile() {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === 'fullName') {
+      const alphabetRegex = /^[a-zA-Z\s]*$/;
+      if (!alphabetRegex.test(value)) return; 
+    }
+
+    if (name === 'phone') {
+      const numberRegex = /^[0-9]*$/;
+      if (!numberRegex.test(value) || value.length > 10) return; 
+    }
+
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleRoleChange = async (e) => {
@@ -59,7 +71,7 @@ function Profile() {
 
       toast.success(`System Access Changed to: ${newRole.toUpperCase()}`);
       
-      setTimeout(() => window.location.reload(), 1000);
+      setTimeout(() => window.location.reload(), 1200);
 
     } catch (error) {
       toast.error("Failed to change role");
@@ -69,6 +81,15 @@ function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.fullName.trim().length < 3) {
+      return toast.warn("Full Name must be at least 3 characters.");
+    }
+
+    if (formData.phone.length !== 10) {
+      return toast.warn("Phone number must be exactly 10 digits.");
+    }
+
     try {
       const token = localStorage.getItem('token');
       const res = await axiosInstance.put('/auth/profile', formData, {
@@ -76,9 +97,10 @@ function Profile() {
       });
 
       localStorage.setItem('userInfo', JSON.stringify(res.data));
+      setUser(res.data);
       toast.success("Profile Updated Successfully!");
     } catch (error) {
-      toast.error("Update Failed");
+      toast.error(error.response?.data?.message || "Failed to update profile");
     }
   };
 
@@ -86,6 +108,7 @@ function Profile() {
 
   return (
     <div className="pro-profile-wrapper">
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
       
       <div className="pro-profile-grid">
         
@@ -112,8 +135,8 @@ function Profile() {
               <span className="value active"><FiCheckCircle/> Active</span>
             </div>
             <div className="stat-item">
-              <span className="label">Member Since</span>
-              <span className="value">2024</span>
+              <span className="label">Access Level</span>
+              <span className="value">Verified</span>
             </div>
           </div>
         </aside>
@@ -137,16 +160,20 @@ function Profile() {
                     name="fullName" 
                     value={formData.fullName} 
                     onChange={handleChange} 
+                    placeholder="Enter alphabets only"
+                    required
                   />
                 </div>
                 
                 <div className="input-field">
-                  <label><FiPhone /> Phone</label>
+                  <label><FiPhone /> Phone (10 Digits)</label>
                   <input 
-                    type="tel" 
+                    type="text" 
                     name="phone" 
                     value={formData.phone} 
                     onChange={handleChange} 
+                    placeholder="e.g. 9876543210"
+                    required
                   />
                 </div>
               </div>
@@ -154,7 +181,7 @@ function Profile() {
               <div className="input-field disabled">
                 <label><FiMail /> Email Address</label>
                 <input type="email" value={formData.email} disabled />
-                <span className="locked-badge">Locked</span>
+                <span className="locked-badge">Primary Identity Locked</span>
               </div>
             </div>
 
@@ -165,7 +192,7 @@ function Profile() {
                   <FiShield />
                 </div>
                 <div className="role-select-wrapper">
-                  <label>Current Role</label>
+                  <label>Selected Module</label>
                   <select 
                     name="role" 
                     value={formData.role} 
@@ -179,13 +206,13 @@ function Profile() {
                 </div>
               </div>
               <p className="role-note">
-                * Switching roles will refresh the page and update your sidebar menu immediately.
+                * Role changes modify your command permissions and menu items.
               </p>
             </div>
 
             <div className="form-footer">
               <button type="submit" className="pro-save-btn">
-                <FiSave /> Save Changes
+                <FiSave /> Update Profile
               </button>
             </div>
 

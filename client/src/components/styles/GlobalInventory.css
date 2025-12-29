@@ -1,4 +1,3 @@
-/* --- LAYOUT --- */
 .Global-inv-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -8,7 +7,6 @@
   background-color: var(--sidemenu-bg-main);
 }
 
-/* HEADER */
 .Global-inv-header {
   display: flex;
   justify-content: space-between;
@@ -50,7 +48,6 @@
 }
 .Global-inv-btn-primary:hover { transform: translateY(-2px); opacity: 0.95; }
 
-/* --- ADMIN PENDING REQUESTS --- */
 .Global-inv-pending-req-section {
   margin-bottom: 40px; background: var(--sidemenu-hover-bg);
   border: 1px solid var(--sidemenu-border-color); border-radius: 16px; padding: 25px;
@@ -124,7 +121,6 @@
   cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 
-/* --- STATS PANEL --- */
 .Global-inv-stats-panel {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-bottom: 30px;
 }
@@ -142,7 +138,6 @@
 .Global-inv-green { background: #f0fdf4; color: #16a34a; }
 .Global-inv-red { background: #fef2f2; color: #ef4444; }
 
-/* Dark mode icon overrides */
 [data-theme="dark"] .Global-inv-blue { background: #172554; }
 [data-theme="dark"] .Global-inv-green { background: #052e16; }
 [data-theme="dark"] .Global-inv-red { background: #450a0a; }
@@ -150,7 +145,6 @@
 .Global-inv-stat-info h3 { font-size: 0.8rem; color: var(--sidemenu-text-muted); text-transform: uppercase; margin: 0 0 5px 0; }
 .Global-inv-stat-info span { font-size: 1.5rem; font-weight: 800; color: var(--sidemenu-text-main); }
 
-/* --- CONTENT CARD --- */
 .Global-inv-content-card {
   background: var(--sidemenu-bg-sidebar); border: 1px solid var(--sidemenu-border-color);
   border-radius: 16px; overflow: hidden; box-shadow: var(--sidemenu-shadow);
@@ -178,7 +172,6 @@
   background: var(--sidemenu-bg-sidebar); color: var(--sidemenu-text-main); box-shadow: var(--sidemenu-shadow);
 }
 
-/* TABLE */
 .Global-inv-table-responsive { width: 100%; overflow-x: auto; }
 .Global-inv-table { width: 100%; border-collapse: collapse; text-align: left; }
 
@@ -192,7 +185,6 @@
 }
 .Global-inv-table tr:hover { background: var(--sidemenu-hover-bg); }
 
-/* Table Elements */
 .Global-inv-item-cell { display: flex; align-items: center; gap: 15px; }
 .Global-inv-icon-box {
   width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center;
@@ -205,7 +197,6 @@
   border: 1px solid var(--sidemenu-border-color); font-size: 0.8rem; font-weight: 600; color: var(--sidemenu-text-muted);
 }
 
-/* Stock Control */
 .Global-inv-stock-control { display: flex; align-items: center; gap: 12px; }
 .Global-inv-qty-btn {
   width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--sidemenu-border-color);
@@ -217,12 +208,10 @@
 .Global-inv-qty-value { font-weight: 800; font-size: 1.1rem; min-width: 60px; text-align: center; }
 .Global-inv-qty-value small { font-weight: 500; color: var(--sidemenu-text-muted); font-size: 0.85rem; margin-left: 4px; }
 
-/* Status */
 .Global-inv-status-badge { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
 .Global-inv-status-badge.Global-inv-instock { background: #f0fdf4; color: #16a34a; }
 .Global-inv-status-badge.Global-inv-lowstock { background: #fff7ed; color: #f97316; }
 .Global-inv-status-badge.Global-inv-outofstock { background: #fef2f2; color: #ef4444; }
-/* Dark Mode Status */
 [data-theme="dark"] .Global-inv-instock { background: #052e16; color: #86efac; }
 [data-theme="dark"] .Global-inv-lowstock { background: #451a03; color: #fdba74; }
 [data-theme="dark"] .Global-inv-outofstock { background: #450a0a; color: #f87171; }
@@ -238,7 +227,6 @@
 .Global-inv-btn-request:hover { background: var(--sidemenu-primary); color: white; }
 .Global-inv-btn-request:disabled { border-color: var(--sidemenu-border-color); color: var(--sidemenu-text-muted); cursor: not-allowed; background: transparent; }
 
-/* MODAL */
 .Global-inv-modal-backdrop {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 2000;
@@ -273,7 +261,6 @@
 }
 .Global-inv-btn-primary.Global-inv-full { width: 100%; justify-content: center; padding: 14px; font-size: 1rem; }
 
-/* LOADING/EMPTY */
 .Global-inv-loading-state, .Global-inv-empty-state { padding: 80px; text-align: center; color: var(--sidemenu-text-muted); }
 .Global-inv-spinner {
   width: 40px; height: 40px; border: 4px solid var(--sidemenu-border-color);
@@ -281,7 +268,6 @@
   animation: spin 1s linear infinite; margin: 0 auto 15px;
 }
 @keyframes spin { 100% { transform: rotate(360deg); } }
-/* Container: Creates a single, unified pill-shaped unit */
 .qty-stepper-large {
   display: flex;
   align-items: center;
@@ -302,7 +288,6 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Stepper Buttons */
 .qty-stepper-large button {
   width: 50px;
   height: 48px;
@@ -337,7 +322,6 @@
   transform: scale(0.96);
 }
 
-/* Input Field */
 .qty-stepper-large input {
   flex: 1;
   width: 60px;
@@ -352,25 +336,21 @@
   font-family: 'Inter', sans-serif;
 }
 
-/* Removes default up/down arrows (spinners) in Chrome, Safari, Edge, Opera */
 .qty-stepper-large input::-webkit-outer-spin-button,
 .qty-stepper-large input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-/* Removes arrows in Firefox */
 .qty-stepper-large input[type=number] {
   -moz-appearance: textfield;
 }
 
-/* Disabled styling for buttons (optional, but good for UI) */
 .qty-stepper-large button:disabled {
   background: #f8fafc;
   color: #cbd5e1;
   cursor: not-allowed;
 }
-/* Container for footer buttons */
 .Global-inv-req-footer {
   display: flex;
   gap: 12px;
@@ -379,7 +359,6 @@
   background: var(--sidemenu-bg-main);
 }
 
-/* Red Reject Button */
 .Global-inv-btn-reject {
   flex: 1;
   background: white;
@@ -410,12 +389,9 @@
   transform: scale(0.96);
 }
 
-/* Ensure Authorize button also takes half width */
 .Global-inv-btn-approve {
   flex: 1;
-  /* ... existing styles ... */
 }
-/* RESPONSIVE */
 @media (max-width: 900px) {
   .Global-inv-stats-panel { grid-template-columns: 1fr; }
   .Global-inv-toolbar { flex-direction: column; gap: 20px; align-items: stretch; }

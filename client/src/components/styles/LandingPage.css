@@ -10,7 +10,6 @@
   --Landing-text-muted: #64748b;
 }
 
-/* Custom Lenis classes usually stay as per library injection, but UI classes are prefixed */
 html.lenis,
 html.lenis body {
   height: auto;

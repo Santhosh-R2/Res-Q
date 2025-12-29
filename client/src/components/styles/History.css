@@ -7,7 +7,6 @@
   background-color: var(--sidemenu-bg-main);
 }
 
-/* HEADER */
 .History-header {
   display: flex;
   justify-content: space-between;
@@ -60,7 +59,6 @@
   background: #dcfce7;
   color: #16a34a;
 }
-/* Dark Mode Override */
 [data-theme="dark"] .History-stat-icon.History-purple { background: #581c87; color: #d8b4fe; }
 [data-theme="dark"] .History-stat-icon.History-green { background: #14532d; color: #86efac; }
 
@@ -75,7 +73,6 @@
   color: var(--sidemenu-text-muted);
 }
 
-/* CONTROLS */
 .History-controls {
   margin-bottom: 25px;
 }
@@ -104,7 +101,6 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-/* CARD LIST */
 .History-list {
   display: flex;
   flex-direction: column;
@@ -156,7 +152,6 @@
   background: #dbeafe;
   color: #2563eb;
 }
-/* Dark Mode Override */
 [data-theme="dark"] .History-icon-box.History-medical { background: #450a0a; }
 [data-theme="dark"] .History-icon-box.History-fire { background: #431407; }
 [data-theme="dark"] .History-icon-box.History-flood { background: #172554; }
@@ -223,7 +218,6 @@
   color: var(--sidemenu-text-muted);
 }
 
-/* Dark Mode Override */
 [data-theme="dark"] .History-badge.History-green { background: #052e16; color: #86efac; }
 [data-theme="dark"] .History-badge.History-blue { background: #172554; color: #93c5fd; }
 

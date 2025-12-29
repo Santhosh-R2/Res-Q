@@ -6,7 +6,7 @@ import {
   FiHome, FiActivity, FiMapPin, FiBox, 
   FiUser, FiLogOut, FiMoon, FiSun, FiMenu,
   FiShield, FiGift, FiDatabase, FiUsers, FiAlertCircle, 
-  FiClipboard, FiX, FiTruck, FiList
+  FiClipboard, FiX, FiTruck, FiList,
 } from "react-icons/fi";
 import { BiError } from "react-icons/bi"; 
 import '../styles/UserLayout.css';
@@ -96,6 +96,8 @@ function UserLayout() {
     { name: "Dispatch Command", icon: <FiClipboard />, path: "/available-tasks" },
     { name: "User Database", icon: <FiUsers />, path: "/manage-users" },
     { name: "Global Inventory", icon: <FiDatabase />, path: "/inventory" },
+    { name: "Inventory History", icon: <FiActivity />, path: "/inventory-history" },
+
   ];
 
   const getMenu = () => {

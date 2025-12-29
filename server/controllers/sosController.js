@@ -44,10 +44,8 @@ const createSOS = async (req, res) => {
   }
 };
 
-// Helper function for Email Broadcast
 const broadcastSOSEmail = async (sosData, requesterName) => {
   try {
-    // 1. Get all users except the one who created the SOS
     const users = await User.find({ _id: { $ne: sosData.userId } }).select("email");
     const emailList = users.map(u => u.email);
 
@@ -63,7 +61,7 @@ const broadcastSOSEmail = async (sosData, requesterName) => {
 
     const mailOptions = {
       from: `"ResQLink EMERGENCY" <${process.env.EMAIL_USER}>`,
-      to: emailList, // Sends to everyone in the list
+      to: emailList, 
       subject: `⚠️ URGENT: ${sosData.type.toUpperCase()} Alert from ${requesterName}`,
       html: `
         <div style="font-family: 'Helvetica', Arial, sans-serif; background-color: #0f172a; padding: 40px 20px; color: #ffffff;">
@@ -133,9 +131,8 @@ const getAllSOS = async (req, res) => {
 };
 const getAllSOSAnalytics = async (req, res) => {
   try {
-    // No filter = returns pending, accepted, resolved, cancelled
     const allAlerts = await SOSRequest.find({})
-      .select('type status createdAt location') // Select only needed fields for speed
+      .select('type status createdAt location') 
       .sort({ createdAt: -1 });
 
     res.json(allAlerts);
@@ -199,22 +196,17 @@ const assignTask = async (req, res) => {
     const { sosId, volunteerId } = req.body;
     console.log(`[ASSIGN] Attempting to assign task ${sosId} to ${volunteerId}`);
 
-    // 1. Find SOS
     const sos = await SOSRequest.findById(sosId).populate("userId", "fullName");
     if (!sos) return res.status(404).json({ message: "Task not found" });
-
-    // 2. Find Volunteer
     const volunteer = await User.findById(volunteerId);
     if (!volunteer) return res.status(404).json({ message: "Volunteer not found" });
 
     console.log(`[ASSIGN] Found Volunteer: ${volunteer.email}`);
 
-    // 3. Update SOS
     sos.assignedVolunteer = volunteerId;
     sos.status = "accepted"; 
     await sos.save();
 
-    // 4. Trigger Email (Don't use 'await' here so the response returns faster)
     sendAssignmentEmail(volunteer, sos).catch(err => console.error("Email Helper Error:", err));
 
     res.json({ message: "Task Assigned Successfully", sos });
@@ -225,7 +217,6 @@ const assignTask = async (req, res) => {
 };
 
 const sendAssignmentEmail = async (volunteer, sosData) => {
-  // Debug check for credentials
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     console.error("CRITICAL: Email credentials missing in .env file");
     return;

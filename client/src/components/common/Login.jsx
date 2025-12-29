@@ -5,6 +5,8 @@ import { auth, googleProvider } from '../../firebase';
 import { signInWithPopup } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css';
+// Added FiEye and FiEyeOff icons
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 import googleLogo from '../../assets/LandingImg/google.png';
 import axiosInstance from '../api/baseUrl';
@@ -16,6 +18,7 @@ function Login() {
   const navigate = useNavigate();
   const comp = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); 
   
   const [formData, setFormData] = useState({ 
     email: '', 
@@ -39,16 +42,6 @@ function Login() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleGoogle = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      toast.success(`Welcome ${result.user.displayName}!`);
-      setTimeout(() => navigate('/dashboard'), 1500);
-    } catch (error) {
-      toast.error("Google Sign-In Failed");
-    }
   };
 
   const handleLogin = async (e) => {
@@ -125,7 +118,6 @@ function Login() {
                   <option value="victim">Victim (Requesting Help)</option>
                   <option value="volunteer">Volunteer (Providing Aid)</option>
                   <option value="donor">Donor (Giving Supplies)</option>
-                 
                 </select>
               </div>
             </div>
@@ -150,13 +142,28 @@ function Login() {
               <div className="input-wrapper">
                 <span className="input-icon">🔒</span>
                 <input 
-                  type="password" 
+                  type={showPassword ? "text" : "password"} 
                   name="password" 
                   placeholder="••••••••" 
                   value={formData.password}
                   onChange={handleChange}
                   required 
+                  style={{ paddingRight: '45px' }}
                 />
+                <div 
+                  className="login-eye-icon" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '15px',
+                    cursor: 'pointer',
+                    color: '#6b7280',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}
+                >
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                </div>
               </div>
             </div>
 
@@ -176,17 +183,9 @@ function Login() {
             </button>
           </form>
 
-          {/* <div className="social-login-section animate-item">
-            <div className="divider"><span>OR</span></div>
-            <button className="google-auth-btn" onClick={handleGoogle}>
-              <img src={googleLogo} alt="G" /> 
-              <span>Continue with Google</span>
-            </button>
-           
-          </div> */}
- <p className="signup-text">
-              New here? <Link to="/register">Create an account</Link>
-            </p>
+          <p className="signup-text animate-item">
+            New here? <Link to="/register">Create an account</Link>
+          </p>
         </div>
       </div>
     </div>

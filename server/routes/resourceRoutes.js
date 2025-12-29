@@ -9,7 +9,8 @@ const {
   updateResourceStatus,
   getLogisticsTasks,
   approveResourceRequest,
-  rejectResourceRequest
+  rejectResourceRequest,
+  getDistributionHistory
 } = require("../controllers/resourceController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -22,4 +23,5 @@ router.put("/:id/status", protect, updateResourceStatus);
 router.get("/logistics", protect, getLogisticsTasks);
 router.put("/:id/approve", protect, approveResourceRequest);
 router.put('/:id/reject', protect, rejectResourceRequest);
+router.get('/distribution-history', protect, getDistributionHistory);
 module.exports = router;

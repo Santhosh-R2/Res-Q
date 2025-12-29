@@ -1,17 +1,19 @@
-import React, { useState, useLayoutEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import axiosInstance from '../api/baseUrl';
 import { ToastContainer, toast } from 'react-toastify';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { FiMapPin, FiCheck, FiUser, FiMail, FiPhone, FiLock, FiGlobe } from "react-icons/fi";
+import { 
+  FiMapPin, FiCheck, FiUser, FiMail, FiPhone, FiLock, FiGlobe, FiEye, FiEyeOff 
+} from "react-icons/fi";
 import { BiRadar } from "react-icons/bi";
 
 import '../styles/Registration.css'; 
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
 let DefaultIcon = L.icon({ iconUrl: icon, shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
 L.Marker.prototype.options.icon = DefaultIcon;
 
@@ -26,10 +28,33 @@ function Registration() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [showMap, setShowMap] = useState(false);
-  const [formData, setFormData] = useState({ fullName: '', email: '', phone: '', password: '', confirmPassword: '', role: 'victim' });
+  const [showPassword, setShowPassword] = useState(false);
   const [location, setLocation] = useState(null);
+  
+  const [formData, setFormData] = useState({ 
+    fullName: '', 
+    email: '', 
+    phone: '', 
+    password: '', 
+    confirmPassword: '', 
+    role: 'victim' 
+  });
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'fullName') {
+      const regex = /^[a-zA-Z\s]*$/;
+      if (!regex.test(value)) return; 
+    }
+
+    if (name === 'phone') {
+      const regex = /^[0-9]*$/;
+      if (!regex.test(value) || value.length > 10) return;
+    }
+
+    setFormData({ ...formData, [name]: value });
+  };
+
   const selectRole = (role) => setFormData({ ...formData, role: role });
 
   const getCurrentLocation = () => {
@@ -44,9 +69,39 @@ function Registration() {
     }
   };
 
+  const validateForm = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (formData.fullName.trim().length < 3) {
+      toast.error("Enter a valid full name");
+      return false;
+    }
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Invalid email format");
+      return false;
+    }
+    if (formData.phone.length !== 10) {
+      toast.error("Phone number must be exactly 10 digits");
+      return false;
+    }
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return false;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match");
+      return false;
+    }
+    if (!location) {
+      toast.warn("Please set your location (GPS or Map)");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if(formData.password !== formData.confirmPassword) return toast.error("Passwords mismatch");
+    if (!validateForm()) return;
     
     setIsLoading(true);
     try {
@@ -61,7 +116,7 @@ function Registration() {
         setTimeout(() => navigate('/login'), 1500);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed.");
+      toast.error(error.response?.data?.message || "Registration failed");
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +128,7 @@ function Registration() {
       <div className="mesh-gradient"></div>
 
       <div className="reg-pro-card">
-                <div className="reg-pro-sidebar">
+        <div className="reg-pro-sidebar">
           <div className="brand-logo">
             <BiRadar className="logo-icon" /> ResQ-Link
           </div>
@@ -86,7 +141,6 @@ function Registration() {
           </div>
         </div>
 
-        {/* RIGHT SIDE: FORM */}
         <div className="reg-pro-form-container">
           <div className="form-header">
             <h2>Create Account</h2>
@@ -94,7 +148,6 @@ function Registration() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            
             <label className="section-label">I am joining as:</label>
             <div className="role-pills">
               {['victim', 'volunteer', 'donor'].map((r) => (
@@ -111,17 +164,17 @@ function Registration() {
             <div className="input-grid">
               <div className="input-box">
                 <FiUser className="icon" />
-                <input type="text" name="fullName" placeholder="Full Name" onChange={handleChange} required />
+                <input type="text" name="fullName" value={formData.fullName} placeholder="Full Name" onChange={handleChange} required />
               </div>
               <div className="input-box">
                 <FiPhone className="icon" />
-                <input type="tel" name="phone" placeholder="Phone Number" onChange={handleChange} required />
+                <input type="text" name="phone" value={formData.phone} placeholder="10-Digit Phone" onChange={handleChange} required />
               </div>
             </div>
 
             <div className="input-box full">
               <FiMail className="icon" />
-              <input type="email" name="email" placeholder="Email Address" onChange={handleChange} required />
+              <input type="email" name="email" value={formData.email} placeholder="Email Address" onChange={handleChange} required />
             </div>
 
             <div className="location-card-pro">
@@ -138,11 +191,28 @@ function Registration() {
             <div className="input-grid">
               <div className="input-box">
                 <FiLock className="icon" />
-                <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  name="password" 
+                  value={formData.password}
+                  placeholder="Password" 
+                  onChange={handleChange} 
+                  required 
+                />
+                <div className="eye-icon" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                </div>
               </div>
               <div className="input-box">
                 <FiLock className="icon" />
-                <input type="password" name="confirmPassword" placeholder="Confirm" onChange={handleChange} required />
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  name="confirmPassword" 
+                  value={formData.confirmPassword}
+                  placeholder="Confirm" 
+                  onChange={handleChange} 
+                  required 
+                />
               </div>
             </div>
 
@@ -150,7 +220,6 @@ function Registration() {
               {isLoading ? "Processing..." : "Create Account"}
             </button>
           </form>
-
         </div>
       </div>
 
@@ -171,7 +240,6 @@ function Registration() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

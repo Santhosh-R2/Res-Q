@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FiMail, FiLock, FiShield, FiArrowLeft, FiLoader } from 'react-icons/fi';
-import { toast } from 'react-toastify';
+import { toast,ToastContainer } from 'react-toastify';
 import axiosInstance from '../api/baseUrl';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ForgotPassword.css';
@@ -21,7 +21,8 @@ function ForgotPassword() {
       toast.success("Verification code sent to email");
       setStep(2);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to send OTP");
+      console.log(err);
+      toast.error(err?.response?.data?.message || "Failed to send OTP");
     } finally {
       setLoading(false);
     }
@@ -43,6 +44,7 @@ function ForgotPassword() {
 
   return (
     <div className="forgot-pass-wrapper">
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
       <div className="forgot-pass-card animate-fade-up">
         <button className="back-btn" onClick={() => step === 1 ? navigate('/login') : setStep(1)}>
           <FiArrowLeft /> Back

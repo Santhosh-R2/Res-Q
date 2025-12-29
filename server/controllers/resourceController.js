@@ -1,8 +1,7 @@
 const ResourceRequest = require("../models/ResourceRequest");
-const SOSRequest = require("../models/SOSRequest"); // Ensure this is imported
+const SOSRequest = require("../models/SOSRequest");
 const User = require("../models/User");
 const Inventory = require("../models/Inventory");
-// @desc    Create a Supply Request
 const createResourceRequest = async (req, res) => {
   try {
     const { items, urgency, notes, sosId } = req.body;
@@ -31,7 +30,6 @@ const createResourceRequest = async (req, res) => {
   }
 };
 
-// @desc    Get Logged-in User's Requests
 const getMyResources = async (req, res) => {
   try {
     const requests = await ResourceRequest.find({ userId: req.user._id }).sort({ createdAt: -1 });
@@ -41,7 +39,6 @@ const getMyResources = async (req, res) => {
   }
 };
 
-// @desc    Get ALL Pending Requests (For Donors)
 const getAllResources = async (req, res) => {
   try {
     const requests = await ResourceRequest.find({ status: "pending" })
@@ -53,7 +50,6 @@ const getAllResources = async (req, res) => {
   }
 };
 
-// @desc    Donor Pledges Item
 const fulfillRequest = async (req, res) => {
   try {
     const resource = await ResourceRequest.findById(req.params.id);
@@ -69,7 +65,6 @@ const fulfillRequest = async (req, res) => {
   }
 };
 
-// @desc    Get My Pledges (Track Donations)
 const getMyDonations = async (req, res) => {
   try {
     const donations = await ResourceRequest.find({ donorId: req.user._id })
@@ -81,34 +76,25 @@ const getMyDonations = async (req, res) => {
   }
 };
 
-// @desc    Volunteer Updates Status (collected/delivered)
-// @desc    Volunteer Updates Resource Status
-// @route   PUT /api/resources/:id/status
 const updateResourceStatus = async (req, res) => {
   try {
-    const { status } = req.body; // New status (e.g., 'collected', 'delivered')
+    const { status } = req.body; 
     const resource = await ResourceRequest.findById(req.params.id);
 
     if (!resource) return res.status(404).json({ message: "Not Found" });
 
-    // --- VALIDATION LOGIC FIXED ---
-    
-    // Case 1: Trying to mark as 'collected'
     if (status === 'collected') {
-        // Allow if it was pledged by donor ('fulfilled') OR sent by admin ('dispatched')
         if (resource.status !== 'fulfilled' && resource.status !== 'dispatched') {
             return res.status(400).json({ message: "Item is not ready for pickup yet." });
         }
     }
 
-    // Case 2: Trying to mark as 'delivered'
     if (status === 'delivered') {
         if (resource.status !== 'collected') {
             return res.status(400).json({ message: "Item must be collected first." });
         }
     }
 
-    // Update status
     resource.status = status;
     await resource.save();
 
@@ -119,17 +105,15 @@ const updateResourceStatus = async (req, res) => {
   }
 };
 
-// @desc    Get Logistics Tasks for Volunteer (Items linked to their SOS missions)
 const getLogisticsTasks = async (req, res) => {
   try {
-    // 1. SOS Tasks assigned to me
     const myMissions = await SOSRequest.find({ assignedVolunteer: req.user._id }).select('_id');
     const missionIds = myMissions.map(m => m._id);
 
     const logistics = await ResourceRequest.find({
       $or: [
-        { sosId: { $in: missionIds } }, // Items for my SOS missions
-        { userId: req.user._id }        // Items I requested directly from Global Inventory
+        { sosId: { $in: missionIds } }, 
+        { userId: req.user._id }       
       ],
       status: { $in: ['fulfilled', 'collected', 'delivered', 'dispatched'] } 
     })
@@ -142,7 +126,6 @@ const getLogisticsTasks = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-// @desc    Admin Approves Resource Request & Deducts Inventory
 const approveResourceRequest = async (req, res) => {
   try {
     const request = await ResourceRequest.findById(req.params.id);
@@ -150,10 +133,7 @@ const approveResourceRequest = async (req, res) => {
     if (!request) return res.status(404).json({ message: "Request not found" });
     if (request.status === 'dispatched') return res.status(400).json({ message: "Already dispatched." });
 
-    // Iterate through requested items
     for (const item of request.items) {
-      // 1. Find Item (Case Insensitive)
-      // Use Regex to find "Rice" even if stored as "rice" or "Rice Bags"
       const inventoryItem = await Inventory.findOne({ 
         itemName: { $regex: new RegExp(`^${item.itemCategory}$`, "i") } 
       });
@@ -164,20 +144,16 @@ const approveResourceRequest = async (req, res) => {
         });
       }
 
-      // 2. Parse Quantity
       const qtyRequested = parseInt(item.quantity) || 0; 
       
-      // 3. Check Stock
       if (inventoryItem.quantity < qtyRequested) {
         return res.status(400).json({ 
           message: `Insufficient Stock: Only ${inventoryItem.quantity} ${inventoryItem.unit} of '${item.itemCategory}' available.` 
         });
       }
 
-      // 4. Deduct
       inventoryItem.quantity -= qtyRequested;
       
-      // Update status tag
       if (inventoryItem.quantity === 0) inventoryItem.status = 'Out of Stock';
       else if (inventoryItem.quantity < 10) inventoryItem.status = 'Low Stock';
       else inventoryItem.status = 'In Stock';
@@ -185,7 +161,6 @@ const approveResourceRequest = async (req, res) => {
       await inventoryItem.save();
     }
 
-    // Success
     request.status = 'dispatched';
     await request.save();
 
@@ -203,12 +178,10 @@ const rejectResourceRequest = async (req, res) => {
     
     if (!request) return res.status(404).json({ message: "Request not found" });
     
-    // Check if it's already processed
     if (request.status !== 'pending') {
       return res.status(400).json({ message: `Cannot reject. Current status: ${request.status}` });
     }
 
-    // Update status to rejected
     request.status = 'rejected';
     await request.save();
 
@@ -216,6 +189,20 @@ const rejectResourceRequest = async (req, res) => {
   } catch (error) {
     console.error("Rejection Error:", error);
     res.status(500).json({ message: "Server Error during rejection" });
+  }
+};
+const getDistributionHistory = async (req, res) => {
+  try {
+    const history = await ResourceRequest.find({ 
+      status: { $in: ['dispatched', 'delivered'] } 
+    })
+    .populate("userId", "fullName email phone")
+    .sort({ updatedAt: -1 });
+
+    res.json(history);
+  } catch (error) {
+    console.error("History Error:", error);
+    res.status(500).json({ message: "Failed to fetch distribution history" });
   }
 };
 module.exports = { 
@@ -227,5 +214,6 @@ module.exports = {
   updateResourceStatus,
   getLogisticsTasks,
   approveResourceRequest,
-  rejectResourceRequest
+  rejectResourceRequest,
+  getDistributionHistory
 };

@@ -24,7 +24,7 @@ import DeliveryLogistics from './components/User/DeliveryLogistics'
 import UserDatabase from './components/Admin/UserDatabase'
 import GlobalInventory from './components/Admin/GlobalInventory'
 import ForgotPassword from './components/User/ForgotPassword'
-
+import InventoryHistory from './components/Admin/InventoryHistory'
 function App() {
   return (
     <Router>
@@ -53,6 +53,8 @@ function App() {
           <Route path="/logistics" element={<DeliveryLogistics />} />
           <Route path="/manage-users" element={<UserDatabase />} />
           <Route path="/inventory" element={<GlobalInventory />} />
+          <Route path="/inventory-history" element={<InventoryHistory />} />
+
         </Route>
       </Routes>
     </Router>
