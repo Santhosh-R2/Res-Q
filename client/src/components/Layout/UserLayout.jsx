@@ -9,6 +9,7 @@ import {
   FiClipboard, FiX, FiTruck, FiList,
 } from "react-icons/fi";
 import { BiError } from "react-icons/bi"; 
+import { FaRegMessage } from "react-icons/fa6";
 import '../styles/UserLayout.css';
 
 function UserLayout() {
@@ -97,6 +98,7 @@ function UserLayout() {
     { name: "User Database", icon: <FiUsers />, path: "/manage-users" },
     { name: "Global Inventory", icon: <FiDatabase />, path: "/inventory" },
     { name: "Inventory History", icon: <FiActivity />, path: "/inventory-history" },
+    { name: "Enquiries", icon: <FaRegMessage />, path: "/enquiries" },
 
   ];
 

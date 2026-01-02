@@ -1,21 +1,62 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Lenis from '@studio-freight/lenis'; 
-import contactImage from '../../assets/AboutImg/helping.jpg'; 
+import Lenis from '@studio-freight/lenis';
+import contactImage from '../../assets/AboutImg/helping.jpg';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 import '../styles/ContactUs.css';
+import axiosInstance from '../api/baseUrl';
 
 gsap.registerPlugin(ScrollTrigger);
 
 function ContactUs() {
-  const comp = useRef(null); 
+  const comp = useRef(null);
 
+  const [contactData, setContactData] = React.useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: 'General Inquiry',
+    message: ''
+  });
+  const handleChange = (e) => {
+
+    setContactData({
+      ...contactData, [e.target.name]: e.target.value
+    })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Submitting contact form with data:", contactData);
+
+    try {
+
+      const response = await axiosInstance.post('/contact', contactData);
+      toast.success("Message sent successfully!");
+      console.log(response);
+      
+      setContactData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        subject: 'General Inquiry',
+        message: ''
+      });
+    } catch (error) {
+      const msg = error.response?.data?.message || "Error sending message.";
+      toast.error(msg);
+    }
+  }
   useLayoutEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
-      direction: 'vertical', 
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      direction: 'vertical',
       smooth: true,
       smoothTouch: false,
     });
@@ -33,15 +74,15 @@ function ContactUs() {
     gsap.ticker.lagSmoothing(0);
 
     let ctx = gsap.context(() => {
-            gsap.fromTo(".cnt-header-content > *",
+      gsap.fromTo(".cnt-header-content > *",
         { y: 50, opacity: 0 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          duration: 1, 
-          stagger: 0.15, 
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          stagger: 0.15,
           ease: "power3.out",
-          delay: 0.2 
+          delay: 0.2
         }
       );
 
@@ -51,11 +92,11 @@ function ContactUs() {
           y: 0,
           opacity: 1,
           duration: 1,
-          stagger: 0.2, 
+          stagger: 0.2,
           ease: "power3.out",
           scrollTrigger: {
             trigger: ".cnt-container",
-            start: "top 85%", 
+            start: "top 85%",
           }
         }
       );
@@ -67,8 +108,8 @@ function ContactUs() {
           opacity: 1,
           duration: 0.8,
           stagger: 0.1,
-          ease: "back.out(1.7)", 
-          delay: 0.5, 
+          ease: "back.out(1.7)",
+          delay: 0.5,
           scrollTrigger: {
             trigger: ".cnt-info-card",
             start: "top 80%",
@@ -101,7 +142,7 @@ function ContactUs() {
 
   return (
     <div className="cnt-page-wrapper" ref={comp}>
-      
+<ToastContainer/>
       <div className="cnt-header">
         <div className="cnt-header-bg"></div>
         <div className="cnt-header-content">
@@ -113,15 +154,15 @@ function ContactUs() {
 
       <div className="cnt-container">
         <div className="cnt-row">
-          
+
           <div className="cnt-col cnt-info-col">
             <div className="cnt-info-card">
               <h3>Contact Information</h3>
               <p className="cnt-info-desc">
-                For immediate emergency assistance, please use the SOS button in the app. 
+                For immediate emergency assistance, please use the SOS button in the app.
                 For general inquiries, reach out below.
               </p>
-              
+
               <div className="cnt-detail-row">
                 <div className="cnt-icon">📍</div>
                 <div>
@@ -154,38 +195,87 @@ function ContactUs() {
           </div>
 
           <div className="cnt-col cnt-form-col">
-            <form className="cnt-form" onSubmit={(e) => e.preventDefault()}>
+            <form
+              className="cnt-form"
+              onSubmit={handleSubmit}
+            >
               <h3>Send a Message</h3>
-              
+
               <div className="cnt-input-group">
-                <div className="cnt-input-wrapper">
+                <div
+                  className="cnt-input-wrapper"
+
+                >
                   <label>First Name</label>
-                  <input type="text" placeholder="John" />
+                  <input
+                    type="text"
+                    placeholder="John"
+                    name='firstName'
+                    value={contactData.firstName}
+                    onChange={handleChange}
+                    required
+                  />
+
                 </div>
-                <div className="cnt-input-wrapper">
+                <div
+                  className="cnt-input-wrapper"
+                >
                   <label>Last Name</label>
-                  <input type="text" placeholder="Doe" />
+                  <input
+                    type="text"
+                    placeholder="Doe"
+                    name='lastName'
+                    value={contactData.lastName}
+                    onChange={handleChange}
+
+                  />
+
                 </div>
               </div>
 
-              <div className="cnt-input-wrapper">
+              <div
+                className="cnt-input-wrapper"
+
+              >
                 <label>Email Address</label>
-                <input type="email" placeholder="john@example.com" />
+                <input
+                  type="email"
+                  placeholder="john@example.com"
+                  name='email'
+                  value={contactData.email}
+                  onChange={handleChange}
+                  required
+                />
+
               </div>
 
               <div className="cnt-input-wrapper">
                 <label>Subject</label>
-                <select>
+                <select
+                  name='subject'
+                  value={contactData.subject}
+                  onChange={handleChange}
+                >
                   <option>General Inquiry</option>
                   <option>Volunteer Registration Issue</option>
                   <option>NGO Partnership</option>
                   <option>Report a Bug</option>
                 </select>
+
               </div>
 
               <div className="cnt-input-wrapper">
                 <label>Message</label>
-                <textarea rows="5" placeholder="How can we help you?"></textarea>
+                <textarea
+                  name='message'
+                  rows="5"
+                  placeholder="How can we help you?"
+                  value={contactData.message}
+                  onChange={handleChange}
+                >
+
+                </textarea>
+
               </div>
 
               <button type="submit" className="cnt-submit-btn">

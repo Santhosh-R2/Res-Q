@@ -89,10 +89,10 @@ function SOSPage() {
     const rawText = predictions.map(p => p.className.toLowerCase()).join(" ");
     setAiPrediction(predictions[0].className);
 
-    if (rawText.match(/fire|flame|lighter|candle|smoke|volcano|stove|heater|ash/)) return 'Fire';
-    if (rawText.match(/water|lake|ocean|river|boat|canoe|dam|rain|storm|fountain|seashore|puddle/)) return 'Flood';
+    if (rawText.match(/fire|flame|lighter|candle|smoke|volcano|stove|heater|ash|volcano|fireboat|fountain/)) return 'Fire';
+    if (rawText.match(/water|lake|ocean|river|boat|canoe|dam|rain|storm|fountain|seashore|puddle|boathouse|gondola/)) return 'Flood';
     if (rawText.match(/ambulance|stretcher|doctor|nurse|medicine|pill|syringe|band-aid|hospital|mask/)) return 'Medical';
-    if (rawText.match(/rubble|rock|stone|concrete|ruin|prison|wall|brick|debris/)) return 'Collapse';
+    if (rawText.match(/rubble|rock|stone|concrete|ruin|prison|wall|brick|debris|flattop|collapse|total collapse|drop-off|wreck/)) return 'Collapse';
     if (rawText.match(/gun|pistol|rifle|holster|military|police|uniform|knife|weapon/)) return 'Violence';
     return 'Other';
   };
@@ -107,6 +107,7 @@ function SOSPage() {
     imgEl.onload = async () => {
       try {
         const predictions = await net.classify(imgEl);
+        console.log("AI Predictions:", predictions);
         const detectedType = mapPredictionToDisaster(predictions);
         setEmergencyType(detectedType);
         updateSuggestedItems(detectedType);

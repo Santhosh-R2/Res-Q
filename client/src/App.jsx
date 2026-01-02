@@ -25,6 +25,8 @@ import UserDatabase from './components/Admin/UserDatabase'
 import GlobalInventory from './components/Admin/GlobalInventory'
 import ForgotPassword from './components/User/ForgotPassword'
 import InventoryHistory from './components/Admin/InventoryHistory'
+import Enquiries from './components/Admin/Enquiries'
+import EnquiriesDetails from './components/Admin/EnquiriesDetails'
 function App() {
   return (
     <Router>
@@ -54,7 +56,8 @@ function App() {
           <Route path="/manage-users" element={<UserDatabase />} />
           <Route path="/inventory" element={<GlobalInventory />} />
           <Route path="/inventory-history" element={<InventoryHistory />} />
-
+          <Route path ="/enquiries" element={<Enquiries />} />
+          <Route path="/enquiries/:id" element={<EnquiriesDetails />} />
         </Route>
       </Routes>
     </Router>

@@ -9,7 +9,7 @@ const ContactMessageSchema = new mongoose.Schema(
     message: { type: String, required: true },
     status: {
       type: String,
-      enum: ["new", "read", "replied"],
+      enum: ["new", "read"],
       default: "new",
     },
   },
