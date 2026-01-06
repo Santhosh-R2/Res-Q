@@ -16,13 +16,8 @@ const submitContactForm = async (req, res) => {
       message,
     });
 
-    res.status(201).json({
-      success: true,
-      message: "Message sent successfully!",
-      data: newMessage,
-    });
+    res.status(201).json({ success: true, message: "Message sent!", data: newMessage });
   } catch (error) {
-    console.error("Contact Error:", error);
     res.status(500).json({ message: "Server Error sending message." });
   }
 };
@@ -36,4 +31,48 @@ const getAllMessages = async (req, res) => {
   }
 };
 
-module.exports = { submitContactForm, getAllMessages };
+const getMessageById = async (req, res) => {
+  try {
+    const message = await ContactMessage.findById(req.params.id);
+    
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+    
+    res.json(message);
+  } catch (error) {
+    console.error("Fetch Message Error:", error);
+    res.status(500).json({ message: "Invalid ID or Server Error" });
+  }
+};
+
+const updateMessageStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!["new", "read", "replied"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    const updatedMessage = await ContactMessage.findByIdAndUpdate(
+      req.params.id,
+      { status: status },
+      { new: true }
+    );
+
+    if (!updatedMessage) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    res.json({ message: `Status updated to ${status}`, data: updatedMessage });
+  } catch (error) {
+    console.error("Update Status Error:", error);
+    res.status(500).json({ message: "Server Error updating status" });
+  }
+};
+
+module.exports = { 
+  submitContactForm, 
+  getAllMessages, 
+  getMessageById, 
+  updateMessageStatus 
+};
