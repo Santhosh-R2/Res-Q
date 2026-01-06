@@ -5,7 +5,7 @@ const {
   getAllMessages, 
   getMessageById, 
   updateMessageStatus 
-} = require("../controllers/contactController");
+} = require("../controllers/ContactMessage");
 
 router.post("/", submitContactForm);
 
