@@ -88,3 +88,18 @@
     margin-top: 10px;
     white-space: pre-wrap;
 }
+
+.enquiry-details-loader {
+  padding: 100px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--sidemenu-primary);
+}
+.enquiry-details-spinner {
+  width: 40px; height: 40px; border: 4px solid var(--sidemenu-border-color);
+  border-top: 4px solid var(--sidemenu-primary);
+  border-radius: 50%;
+  animation: enquiry-spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+@keyframes enquiry-spin { to { transform: rotate(360deg); } }

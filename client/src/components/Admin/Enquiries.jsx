@@ -1,6 +1,6 @@
 import React from 'react'
 import axiosInstance from '../api/baseUrl';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
 import '../styles/Enquiries.css';
 import { FaRegMessage } from "react-icons/fa6";
@@ -16,9 +16,8 @@ function Enquiries() {
     try {
       const response = await axiosInstance.get('/contact');
       setEnquiries(response.data);
-      console.log(response.data);
     } catch (error) {
-      toast.error("Error fetching enquiries",error);
+      toast.error("Error fetching enquiries");
     }
     finally {
       setLoading(false);
@@ -30,12 +29,13 @@ function Enquiries() {
 
   return (
     <div className='enquiries-wrapper'>
+      <ToastContainer />
       <header className="enquiries-header">
         <div>
           <h1>Enquiries</h1>
         </div>
         <div className="enquiries-count-badge">
-          <FaRegMessage /> {enquiries.length} Unread
+          <FaRegMessage /> {enquiries.filter(enquiry => enquiry.status === 'new').length} Unread
         </div>
       </header>
       <div className='unread-enquiries-grid'>
@@ -45,8 +45,9 @@ function Enquiries() {
             <h3>No Unread Enquiries</h3>
           </div>
         ) : (
-          enquiries.map((enquiry) => (
-            <Link to={`/enquiries/${enquiry._id}` } key={enquiry._id} className='enquiries-nav-link'>
+          enquiries.map((enquiry) => (enquiry.status === 'new' &&
+
+            <Link to={`/enquiries/${enquiry._id}`} key={enquiry._id} className='enquiries-nav-link'>
               <div className='unread-enquiry-card' >
                 <div className='unread-enquiry-card-header'>
                   <span className='unread-enquiry-badge'>
@@ -60,13 +61,13 @@ function Enquiries() {
                 </div>
               </div>
             </Link>
-              ))
+          ))
         )}
 
-            </div>
+      </div>
 
     </div>
-      )
+  )
 }
 
-      export default Enquiries
+export default Enquiries
