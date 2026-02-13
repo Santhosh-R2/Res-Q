@@ -7,6 +7,7 @@ import figters from '../../assets/LandingImg/figters.jpg';
 import landscape from '../../assets/LandingImg/landscape.jpg'; 
 import naturedisaster from '../../assets/LandingImg/naturedisaster.jpg';
 import rescue from '../../assets/LandingImg/rescue.jpg';
+import { Link } from 'react-router-dom';
 
 import '../styles/LandingPage.css';
 
@@ -129,8 +130,8 @@ function LandingPage() {
           <h2>Decentralized Disaster Ecosystem</h2>
           <p>The bridge between distress and rescue. Real-time coordination for Victims, Volunteers, and NGOs.</p>
           <div className="Landing-hero-buttons">
-            <button className="Landing-btn Landing-btn-primary">Request Help (SOS)</button>
-            <button className="Landing-btn Landing-btn-outline">Join Mission</button>
+          <Link to="/login">  <button className="Landing-btn Landing-btn-primary">Request Help (SOS)</button></Link>
+          <Link to="/register">  <button className="Landing-btn Landing-btn-outline">Join Mission</button></Link>
           </div>
         </div>
       </section>
