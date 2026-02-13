@@ -1,12 +1,9 @@
 const Inventory = require("../models/Inventory");
 
-// @desc Get All Inventory
 const getInventory = async (req, res) => {
   try {
-    // Standard find, sorted by newest
     const items = await Inventory.find().sort({ createdAt: -1 });
     
-    // ALWAYS return an array, even if empty
     res.status(200).json(items || []);
   } catch (error) {
     console.error("Fetch Inventory Error:", error);
@@ -14,12 +11,10 @@ const getInventory = async (req, res) => {
   }
 };
 
-// @desc Add Item
 const addInventory = async (req, res) => {
   try {
     const { itemName, category, quantity, unit } = req.body;
     
-    // Status Logic
     let status = 'In Stock';
     if (Number(quantity) === 0) status = 'Out of Stock';
     else if (Number(quantity) < 10) status = 'Low Stock';
@@ -39,7 +34,6 @@ const addInventory = async (req, res) => {
   }
 };
 
-// @desc Update Quantity
 const updateStock = async (req, res) => {
   try {
     const { quantity } = req.body;
@@ -60,7 +54,6 @@ const updateStock = async (req, res) => {
   }
 };
 
-// @desc Delete Item
 const deleteItem = async (req, res) => {
   try {
     await Inventory.findByIdAndDelete(req.params.id);
