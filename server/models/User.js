@@ -4,16 +4,16 @@ const UserSchema = new mongoose.Schema(
   {
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    phone: { type: String, required: true },
+    phone: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: {
       type: String,
-      enum: ['victim', 'volunteer', 'donor', 'admin'], 
+      enum: ['victim', 'volunteer', 'donor', 'admin'],
       default: 'victim',
     },
     location: {
       type: { type: String, default: "Point" },
-      coordinates: { type: [Number], default: [0, 0] }, 
+      coordinates: { type: [Number], default: [0, 0] },
     },
     resetPasswordToken: String,
     resetPasswordExpires: Date,

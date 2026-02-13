@@ -2,15 +2,11 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import Webcam from "react-webcam";
 import axios from 'axios';
-import * as tf from '@tensorflow/tfjs';
-import '@tensorflow/tfjs-backend-webgl';
-import '@tensorflow/tfjs-backend-cpu';
-import * as mobilenet from '@tensorflow-models/mobilenet';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-import { 
+import {
   FiMapPin, FiCamera, FiUpload, FiX, FiCheckCircle, FiInfo, FiRefreshCw, FiRepeat, FiCpu, FiPlus, FiTrash2, FiActivity, FiGlobe
 } from "react-icons/fi";
 import { BiError, BiScan, BiRadar } from "react-icons/bi";
@@ -52,9 +48,8 @@ function SOSPage() {
   const [description, setDescription] = useState('');
   const [emergencyType, setEmergencyType] = useState('');
   const [isLocating, setIsLocating] = useState(true);
-  
-  const [net, setNet] = useState(null);
-  const [isModelLoading, setIsModelLoading] = useState(true);
+
+  const [isServiceOnline, setIsServiceOnline] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiPrediction, setAiPrediction] = useState("");
   const [requestedItems, setRequestedItems] = useState([]);
@@ -69,51 +64,56 @@ function SOSPage() {
   const [facingMode, setFacingMode] = useState("environment");
 
   useEffect(() => {
-    const loadModel = async () => {
+    const checkService = async () => {
       try {
-        await tf.setBackend('webgl').catch(() => tf.setBackend('cpu'));
-        await tf.ready();
-        const model = await mobilenet.load();
-        setNet(model);
-        setIsModelLoading(false);
+        const response = await axios.get('http://localhost:8000/');
+        if (response.data.status === 'online') {
+          setIsServiceOnline(true);
+        }
       } catch (error) {
-        console.error("AI Error:", error);
-        setIsModelLoading(false);
+        console.error("AI Service Offline:", error);
+        setIsServiceOnline(false);
       }
     };
-    loadModel();
+    checkService();
   }, []);
 
-  const mapPredictionToDisaster = (predictions) => {
-    if(!predictions || predictions.length === 0) return 'Other';
-    const rawText = predictions.map(p => p.className.toLowerCase()).join(" ");
-    setAiPrediction(predictions[0].className);
 
-    if (rawText.match(/fire|flame|lighter|candle|smoke|volcano|stove|heater|ash/)) return 'Fire';
-    if (rawText.match(/water|lake|ocean|river|boat|canoe|dam|rain|storm|fountain|seashore|puddle/)) return 'Flood';
-    if (rawText.match(/ambulance|stretcher|doctor|nurse|medicine|pill|syringe|band-aid|hospital|mask/)) return 'Medical';
-    if (rawText.match(/rubble|rock|stone|concrete|ruin|prison|wall|brick|debris/)) return 'Collapse';
-    if (rawText.match(/gun|pistol|rifle|holster|military|police|uniform|knife|weapon/)) return 'Violence';
-    return 'Other';
+
+  const dataURLtoBlob = (dataurl) => {
+    let arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
   };
 
   const runAIAnalysis = async (imageSrc) => {
-    if (!net) return;
     setIsAnalyzing(true);
     setEmergencyType('');
-    const imgEl = new Image();
-    imgEl.src = imageSrc;
-    imgEl.crossOrigin = "anonymous";
-    imgEl.onload = async () => {
-      try {
-        const predictions = await net.classify(imgEl);
-        const detectedType = mapPredictionToDisaster(predictions);
-        setEmergencyType(detectedType);
-        updateSuggestedItems(detectedType);
-        toast.info(`AI Detected: ${detectedType}`);
-      } catch (error) { console.error("AI Error", error); } 
-      finally { setIsAnalyzing(false); }
-    };
+
+    try {
+      const blob = dataURLtoBlob(imageSrc);
+      const formData = new FormData();
+      formData.append('file', blob, 'emergency.jpg');
+
+      const response = await axios.post('http://localhost:8000/predict', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      const { disaster_type, top_prediction, confidence } = response.data;
+
+      setEmergencyType(disaster_type);
+      setAiPrediction(`${top_prediction} (${(confidence * 100).toFixed(1)}%)`);
+      updateSuggestedItems(disaster_type);
+      toast.info(`AI Cluster: ${disaster_type}`);
+    } catch (error) {
+      console.error("AI Prediction Error", error);
+      toast.error("AI Service Error. Please select type manually.");
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const updateSuggestedItems = (type) => {
@@ -159,7 +159,7 @@ function SOSPage() {
   useEffect(() => { getLocation(); }, []);
 
   const confirmManualLocation = () => {
-    if(manualCoords) {
+    if (manualCoords) {
       setLocation({ lat: manualCoords.lat, lng: manualCoords.lng, accuracy: 10 });
       fetchAddress(manualCoords.lat, manualCoords.lng);
       setShowMapSelector(false);
@@ -174,7 +174,7 @@ function SOSPage() {
       setShowCamera(false);
       runAIAnalysis(imageSrc);
     }
-  }, [webcamRef, net]);
+  }, [webcamRef]);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -195,7 +195,7 @@ function SOSPage() {
 
   const addCustomItem = (e) => {
     e.preventDefault();
-    if(newItemName.trim()) {
+    if (newItemName.trim()) {
       setRequestedItems([...requestedItems, { item: newItemName, status: 'pending' }]);
       setNewItemName("");
     }
@@ -214,7 +214,7 @@ function SOSPage() {
   const handleSubmit = async () => {
     if (!location) { toast.error("GPS Required"); return; }
     if (!emergencyType) { toast.warn("Select Type"); return; }
-    
+
     const id = toast.loading("Broadcasting Signal...");
 
     try {
@@ -223,7 +223,7 @@ function SOSPage() {
         emergencyType,
         description,
         image,
-        requiredItems: requestedItems 
+        requiredItems: requestedItems
       };
 
       const token = localStorage.getItem('token');
@@ -232,7 +232,7 @@ function SOSPage() {
       await axiosInstance.post('/sos', payload, config);
 
       toast.update(id, { render: "SOS Broadcasted!", type: "success", isLoading: false, autoClose: 3000 });
-      setStep(3); 
+      setStep(3);
 
     } catch (error) {
       toast.update(id, { render: "Transmission Failed", type: "error", isLoading: false, autoClose: 3000 });
@@ -241,14 +241,14 @@ function SOSPage() {
 
   return (
     <div className="sos-page-wrapper">
-      
+
       <header className="sos-header-pro">
         <div className="status-badge-container">
           <div className={`status-badge ${location ? 'online' : 'offline'}`}>
             <span className="dot"></span> {location ? 'GPS LOCKED' : 'SEARCHING'}
           </div>
           <div className="status-badge ai">
-            <FiCpu /> {isModelLoading ? 'LOADING AI...' : 'AI ONLINE'}
+            <FiCpu /> {isServiceOnline ? 'AI SERVICE ONLINE' : 'AI OFFLINE'}
           </div>
         </div>
         <h1>EMERGENCY COMMAND</h1>
@@ -264,30 +264,30 @@ function SOSPage() {
               <span className="sos-label">INITIATE SOS</span>
             </button>
           </div>
-          
+
           <div className="system-readout">
-             <div className="readout-row">
-               <span className="label">SATELLITE LINK</span>
-               {isLocating ? <span className="value blink">ACQUIRING...</span> : 
-                location ? <span className="value success">ESTABLISHED</span> : 
-                <span className="value error">FAILED</span>}
-             </div>
-             <div className="readout-row">
-               <span className="label">COORDINATES</span>
-               <span className="value">{location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : "--.--, --.--"}</span>
-             </div>
-             <div className="readout-address">
-                <FiMapPin /> {address}
-             </div>
-             
-             <div className="location-actions">
-                {!location && !isLocating && (
-                  <button className="retry-btn" onClick={getLocation}><FiRefreshCw /> Retry GPS</button>
-                )}
-                <button className="manual-map-btn" onClick={() => setShowMapSelector(true)}>
-                  <FiGlobe /> Select on Map
-                </button>
-             </div>
+            <div className="readout-row">
+              <span className="label">SATELLITE LINK</span>
+              {isLocating ? <span className="value blink">ACQUIRING...</span> :
+                location ? <span className="value success">ESTABLISHED</span> :
+                  <span className="value error">FAILED</span>}
+            </div>
+            <div className="readout-row">
+              <span className="label">COORDINATES</span>
+              <span className="value">{location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : "--.--, --.--"}</span>
+            </div>
+            <div className="readout-address">
+              <FiMapPin /> {address}
+            </div>
+
+            <div className="location-actions">
+              {!location && !isLocating && (
+                <button className="retry-btn" onClick={getLocation}><FiRefreshCw /> Retry GPS</button>
+              )}
+              <button className="manual-map-btn" onClick={() => setShowMapSelector(true)}>
+                <FiGlobe /> Select on Map
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -295,7 +295,7 @@ function SOSPage() {
       {step === 2 && (
         <div className="sos-form-container animate-fade-up">
           <div className="sos-pro-card">
-            
+
             <div className="card-header">
               <h3>Situation Report</h3>
               <button className="close-btn" onClick={() => setStep(1)}><FiX /></button>
@@ -307,8 +307,8 @@ function SOSPage() {
                   <BiScan className="scan-icon" /> <p>ANALYZING HAZARD...</p> <div className="scan-line"></div>
                 </div>
               )}
-              
-              <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/*" style={{display:'none'}} />
+
+              <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/*" style={{ display: 'none' }} />
 
               {image ? (
                 <div className="image-preview-wrapper">
@@ -321,7 +321,7 @@ function SOSPage() {
                 </div>
               ) : showCamera ? (
                 <div className="webcam-wrapper">
-                  <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" videoConstraints={{facingMode}} className="webcam-feed" />
+                  <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" videoConstraints={{ facingMode }} className="webcam-feed" />
                   <div className="cam-controls">
                     <button onClick={capturePhoto} className="snap-btn"></button>
                     <button onClick={() => setShowCamera(false)} className="cancel-cam">Cancel</button>
@@ -341,16 +341,16 @@ function SOSPage() {
               )}
             </div>
 
-            {aiPrediction && !isAnalyzing && image && (
+            {/* {aiPrediction && !isAnalyzing && image && (
               <div className="ai-confidence-bar">
                 <FiActivity /> <span>AI IDENTIFIED:</span> <strong>{aiPrediction.toUpperCase()}</strong>
               </div>
-            )}
+            )} */}
 
             <label className="section-label">EMERGENCY TYPE</label>
             <div className="type-grid">
               {['Medical', 'Fire', 'Flood', 'Collapse', 'Violence', 'Other'].map((type) => (
-                <button 
+                <button
                   key={type}
                   className={`type-btn ${emergencyType === type ? 'active' : ''}`}
                   onClick={() => handleTypeChange(type)}
@@ -360,35 +360,35 @@ function SOSPage() {
               ))}
             </div>
 
-          <div className="resource-box">
-  <div className="ai-header">
-    <FiCpu /> <span>INTELLIGENT SUPPLY ALLOCATION</span>
-  </div>
-  <div className="ai-tags">
-    {requestedItems.length === 0 ? (
-      <span className="empty-tag">Pending Analysis...</span>
-    ) : (
-      requestedItems.map((obj, idx) => (
-        <span key={idx} className="ai-tag">
-          {obj.item} <FiX className="del-tag" onClick={() => removeItem(idx)} />
-        </span>
-      ))
-    )}
-  </div>
-  
-  {/* UPDATED INPUT SECTION */}
-  <form className="add-custom-item-container" onSubmit={addCustomItem}>
-    <input 
-      type="text" 
-      placeholder="Request additional item..." 
-      value={newItemName}
-      onChange={(e) => setNewItemName(e.target.value)}
-    />
-    <button type="submit" className="inner-add-btn" title="Add Item">
-      <FiPlus />
-    </button>
-  </form>
-</div>
+            <div className="resource-box">
+              <div className="ai-header">
+                <FiCpu /> <span>INTELLIGENT SUPPLY ALLOCATION</span>
+              </div>
+              <div className="ai-tags">
+                {requestedItems.length === 0 ? (
+                  <span className="empty-tag">Pending Analysis...</span>
+                ) : (
+                  requestedItems.map((obj, idx) => (
+                    <span key={idx} className="ai-tag">
+                      {obj.item} <FiX className="del-tag" onClick={() => removeItem(idx)} />
+                    </span>
+                  ))
+                )}
+              </div>
+
+              {/* UPDATED INPUT SECTION */}
+              <form className="add-custom-item-container" onSubmit={addCustomItem}>
+                <input
+                  type="text"
+                  placeholder="Request additional item..."
+                  value={newItemName}
+                  onChange={(e) => setNewItemName(e.target.value)}
+                />
+                <button type="submit" className="inner-add-btn" title="Add Item">
+                  <FiPlus />
+                </button>
+              </form>
+            </div>
 
             <label className="section-label">ADDITIONAL INTEL</label>
             <textarea className="details-input" placeholder="Casualties, trapped persons, access routes..." value={description} onChange={(e) => setDescription(e.target.value)} rows="2"></textarea>
@@ -408,10 +408,10 @@ function SOSPage() {
           <h2>SIGNAL TRANSMITTED</h2>
           <p>Rescue Teams Deployed to Coordinates.</p>
           <div className="success-meta">
-            <span>ID: #{Math.floor(Math.random()*10000)}</span>
+            <span>ID: #{Math.floor(Math.random() * 10000)}</span>
             <span>Est. Response: 15m</span>
           </div>
-          <button className="return-btn" onClick={() => window.location.href='/dashboard'}>OPEN TRACKER</button>
+          <button className="return-btn" onClick={() => window.location.href = '/dashboard'}>OPEN TRACKER</button>
         </div>
       )}
 
@@ -421,9 +421,9 @@ function SOSPage() {
             <h3>Select Precise Location</h3>
             <p>Tap on the map to place the pin.</p>
             <div className="map-wrapper-box">
-              <MapContainer 
-                center={[20.5937, 78.9629]} 
-                zoom={5} 
+              <MapContainer
+                center={[20.5937, 78.9629]}
+                zoom={5}
                 className="selector-map"
               >
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />

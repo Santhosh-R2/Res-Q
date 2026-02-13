@@ -17,8 +17,21 @@ const registerUser = async (req, res) => {
   try {
     const { fullName, email, phone, password, role, location } = req.body;
 
-    const userExists = await User.findOne({ email });
-    if (userExists) return res.status(400).json({ message: "User already exists" });
+    const userExists = await User.findOne({
+      $or: [
+        { email },
+        { phone }
+      ]
+    });
+
+    if (userExists) {
+      if (userExists.email === email) {
+        return res.status(400).json({ message: "User with this email already exists" });
+      }
+      if (userExists.phone === phone) {
+        return res.status(400).json({ message: "User with this phone number already exists" });
+      }
+    }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -136,6 +149,19 @@ const updateUserProfile = async (req, res) => {
     const user = await User.findById(req.user._id);
 
     if (user) {
+      // Check if email is already taken by another account
+      if (req.body.email && req.body.email !== user.email) {
+        const emailExists = await User.findOne({
+          email: req.body.email,
+          _id: { $ne: user._id }
+        });
+
+        if (emailExists) {
+          return res.status(400).json({ message: "Email is already registered with another account" });
+        }
+      }
+
+      // Check if phone number is already taken by another account
       if (req.body.phone && req.body.phone !== user.phone) {
         const phoneExists = await User.findOne({
           phone: req.body.phone,
@@ -148,6 +174,7 @@ const updateUserProfile = async (req, res) => {
       }
 
       user.fullName = req.body.fullName || user.fullName;
+      user.email = req.body.email || user.email;
       user.phone = req.body.phone || user.phone;
       if (req.body.role) user.role = req.body.role;
 
@@ -157,7 +184,7 @@ const updateUserProfile = async (req, res) => {
         _id: updatedUser._id,
         fullName: updatedUser.fullName,
         email: updatedUser.email,
-        phone: updatedUser.phone, 
+        phone: updatedUser.phone,
         role: updatedUser.role,
         token: generateToken(updatedUser._id),
       });
